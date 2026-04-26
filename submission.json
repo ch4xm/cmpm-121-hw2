@@ -1,0 +1,14 @@
+{
+   "team": [
+             {"firstname": "Jay",
+              "lastname": "Tripathi",
+              "github": "ch4xm",
+              "email": "jaytripathi100@gmail.com"},
+             {"firstname": "Frank",
+              "lastname": "Zeng",
+              "github": "frankmd2",
+              "email": "fzeng3@ucsc.edu"}
+            ],
+   "repository": "git@github.com:ch4xm/cmpm-121-hw2.git",
+   "commit": ""
+}
