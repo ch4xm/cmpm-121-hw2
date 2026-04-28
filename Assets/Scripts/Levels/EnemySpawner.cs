@@ -60,28 +60,26 @@ public class EnemySpawner : MonoBehaviour
         GameObject selector = Instantiate(button, level_selector.transform);
         selector.transform.localPosition = new Vector3(0, 130);
         selector.GetComponent<MenuSelectorController>().spawner = this;
-        selector.GetComponent<MenuSelectorController>().SetLevel("Start"); // 
+        selector.GetComponent<MenuSelectorController>().SetLevel("Start"); // Shouldnt start yet, only start when level button is clicked
     }
 
     private List<Level> ReadLevels()
     {
         // read levels.json
-        string path = Path.Combine(Application.streamingAssetsPath, "levels.json");
-
-        string json = File.ReadAllText(path);
+        string json = File.ReadAllText("Assets/Resources/levels.json");
         var levels = JsonConvert.DeserializeObject<List<Level>>(json);
-        Console.WriteLine(levels);
+
         return levels;
     }
     private Dictionary<string, Enemy> ReadEnemies()
     {
         // read enemies.json
-        string path = Path.Combine(Application.streamingAssetsPath, "enemies.json");
+        string json = File.ReadAllText("Assets/Resources/enemies.json");
 
-        string json = File.ReadAllText(path);
-        var enemies = JsonConvert.DeserializeObject<Dictionary<string, Enemy>>(json);
-        Console.WriteLine(enemies);
-        return enemies;
+        var result = JsonConvert.DeserializeObject<List<Enemy>>(json);
+        var enemiesDict = result.ToDictionary(x => x.name, x => x); // Convert result to dict of name to enemy pairs for easy enemy access
+
+        return enemiesDict;
     }
 
     // Update is called once per frame
@@ -136,22 +134,6 @@ public class EnemySpawner : MonoBehaviour
         EnemyController en = new_enemy.GetComponent<EnemyController>();
         en.hp = new Hittable(enemy.hp, Hittable.Team.MONSTERS, new_enemy);
         en.speed = enemy.speed;
-        GameManager.Instance.AddEnemy(new_enemy);
-        yield return new WaitForSeconds(0.5f);
-    }
-
-    IEnumerator SpawnZombie()
-    {
-        SpawnPoint spawn_point = SpawnPoints[Random.Range(0, SpawnPoints.Length)];
-        Vector2 offset = Random.insideUnitCircle * 1.8f;
-                
-        Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
-        GameObject new_enemy = Instantiate(enemyTemplate, initial_position, Quaternion.identity);
-
-        new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(0);
-        EnemyController en = new_enemy.GetComponent<EnemyController>();
-        en.hp = new Hittable(50, Hittable.Team.MONSTERS, new_enemy);
-        en.speed = 10;
         GameManager.Instance.AddEnemy(new_enemy);
         yield return new WaitForSeconds(0.5f);
     }
