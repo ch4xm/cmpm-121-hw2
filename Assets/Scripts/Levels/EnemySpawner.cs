@@ -9,18 +9,41 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+// helper class for reading level.json
+public class Spawn
+{
+    public string enemy;
+    public string count;
+    public string hp;
+    public string? delay;
+    public List<int>? sequence;
+    public string location;
+    public string? damage;
+}
+
+// helper class for reading level.json
+public class Level
+{
+    public string name;
+    public int? waves;
+    public List<Spawn> spawns;
+}
+
 public class EnemySpawner : MonoBehaviour
 {
     public Image level_selector;
     public GameObject button;
     //public GameObject enemy; // make into list of enemy templates ?? where should it be serialized?
     public List<Enemy> enemyTemplates;
+    public List<Level> levels;
     public SpawnPoint[] SpawnPoints;    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // deserialize here into enemyTemplates
+        // read level.json
+        String level_json = File.ReadAllText("levels.json");
+        levels = JsonConvert.DeserializeObject<List<Level>>(level_json);
 
         GameObject selector = Instantiate(button, level_selector.transform);
         selector.transform.localPosition = new Vector3(0, 130);
@@ -28,6 +51,12 @@ public class EnemySpawner : MonoBehaviour
         selector.GetComponent<MenuSelectorController>().SetLevel("Start");
     }
 
+    void ReadLevel()
+    {
+        
+    }
+    
+    
     // Update is called once per frame
     void Update()
     {
