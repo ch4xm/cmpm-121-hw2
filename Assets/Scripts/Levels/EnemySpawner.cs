@@ -41,6 +41,9 @@ public class EnemySpawner : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // deserialize here into enemyTemplates
+        
+        
         // read level.json
         String level_json = File.ReadAllText("levels.json");
         levels = JsonConvert.DeserializeObject<List<Level>>(level_json);
@@ -50,12 +53,6 @@ public class EnemySpawner : MonoBehaviour
         selector.GetComponent<MenuSelectorController>().spawner = this;
         selector.GetComponent<MenuSelectorController>().SetLevel("Start");
     }
-
-    void ReadLevel()
-    {
-        
-    }
-    
     
     // Update is called once per frame
     void Update()
