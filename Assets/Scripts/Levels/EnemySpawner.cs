@@ -45,7 +45,7 @@ public class EnemySpawner : MonoBehaviour
 {
     public Image level_selector;
     public GameObject button;
-    public GameObject enemyTemplate;
+    public GameObject enemy;
     public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
     public List<Level> levels;
     public SpawnPoint[] SpawnPoints;    
@@ -122,18 +122,18 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator SpawnEnemy(string enemyName)
     {
-        var enemy = enemyTypes[enemyName];
+        var enemyType = enemyTypes[enemyName];
 
         SpawnPoint spawn_point = SpawnPoints[Random.Range(0, SpawnPoints.Length)];
         Vector2 offset = Random.insideUnitCircle * 1.8f;
 
         Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
-        GameObject new_enemy = Instantiate(enemyTemplate, initial_position, Quaternion.identity);
+        GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
 
-        new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(enemy.sprite);
+        new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(enemyType.sprite);
         EnemyController en = new_enemy.GetComponent<EnemyController>();
-        en.hp = new Hittable(enemy.hp, Hittable.Team.MONSTERS, new_enemy);
-        en.speed = enemy.speed;
+        en.hp = new Hittable(enemyType.hp, Hittable.Team.MONSTERS, new_enemy);
+        en.speed = enemyType.speed;
         GameManager.Instance.AddEnemy(new_enemy);
         yield return new WaitForSeconds(0.5f);
     }
