@@ -1,4 +1,3 @@
-using Enemy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -6,8 +5,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
+
+using Random = UnityEngine.Random;
 
 // helper class for reading level.json
 public class Spawn
@@ -29,31 +31,59 @@ public class Level
     public List<Spawn> spawns;
 }
 
+// helper class for reading enemies.json
+public class Enemy
+{
+    public string name;
+    public int sprite;
+    public int hp;
+    public int speed;
+    public int damage;
+}
+
 public class EnemySpawner : MonoBehaviour
 {
     public Image level_selector;
     public GameObject button;
-    //public GameObject enemy; // make into list of enemy templates ?? where should it be serialized?
-    public List<Enemy> enemyTemplates;
+    public GameObject enemyTemplate;
+    public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
     public List<Level> levels;
     public SpawnPoint[] SpawnPoints;    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // deserialize here into enemyTemplates
-        
-        
-        // read level.json
-        String level_json = File.ReadAllText("levels.json");
-        levels = JsonConvert.DeserializeObject<List<Level>>(level_json);
+        // deserialize here into enemyTemplates and levels
+        levels = ReadLevels();
+        enemyTypes = ReadEnemies();
 
         GameObject selector = Instantiate(button, level_selector.transform);
         selector.transform.localPosition = new Vector3(0, 130);
         selector.GetComponent<MenuSelectorController>().spawner = this;
-        selector.GetComponent<MenuSelectorController>().SetLevel("Start");
+        selector.GetComponent<MenuSelectorController>().SetLevel("Start"); // 
     }
-    
+
+    private List<Level> ReadLevels()
+    {
+        // read levels.json
+        string path = Path.Combine(Application.streamingAssetsPath, "levels.json");
+
+        string json = File.ReadAllText(path);
+        var levels = JsonConvert.DeserializeObject<List<Level>>(json);
+        Console.WriteLine(levels);
+        return levels;
+    }
+    private Dictionary<string, Enemy> ReadEnemies()
+    {
+        // read enemies.json
+        string path = Path.Combine(Application.streamingAssetsPath, "enemies.json");
+
+        string json = File.ReadAllText(path);
+        var enemies = JsonConvert.DeserializeObject<Dictionary<string, Enemy>>(json);
+        Console.WriteLine(enemies);
+        return enemies;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -86,23 +116,25 @@ public class EnemySpawner : MonoBehaviour
         GameManager.Instance.state = GameManager.GameState.INWAVE;
         for (int i = 0; i < 10; ++i)
         {
-            yield return SpawnZombie();
+            yield return SpawnEnemy("zombie");
         }
         yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
         GameManager.Instance.state = GameManager.GameState.WAVEEND;
     }
 
-    IEnumerator SpawnEnemy(Enemy enemy)
+    IEnumerator SpawnEnemy(string enemyName)
     {
+        var enemy = enemyTypes[enemyName];
+
         SpawnPoint spawn_point = SpawnPoints[Random.Range(0, SpawnPoints.Length)];
         Vector2 offset = Random.insideUnitCircle * 1.8f;
 
         Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
-        GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
+        GameObject new_enemy = Instantiate(enemyTemplate, initial_position, Quaternion.identity);
 
-        new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(0);
+        new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(enemy.sprite);
         EnemyController en = new_enemy.GetComponent<EnemyController>();
-        en.hp = new Hittable(enemy.health, Hittable.Team.MONSTERS, new_enemy);
+        en.hp = new Hittable(enemy.hp, Hittable.Team.MONSTERS, new_enemy);
         en.speed = enemy.speed;
         GameManager.Instance.AddEnemy(new_enemy);
         yield return new WaitForSeconds(0.5f);
@@ -114,7 +146,7 @@ public class EnemySpawner : MonoBehaviour
         Vector2 offset = Random.insideUnitCircle * 1.8f;
                 
         Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
-        GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
+        GameObject new_enemy = Instantiate(enemyTemplate, initial_position, Quaternion.identity);
 
         new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(0);
         EnemyController en = new_enemy.GetComponent<EnemyController>();
