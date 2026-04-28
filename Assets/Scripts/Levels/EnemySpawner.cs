@@ -1,22 +1,27 @@
-using UnityEngine;
-using Newtonsoft.Json.Linq;
+using Enemy;
 using Newtonsoft.Json;
-using System.IO;
-using System.Collections.Generic;
-using UnityEngine.UI;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemySpawner : MonoBehaviour
 {
     public Image level_selector;
     public GameObject button;
-    public GameObject enemy;
+    //public GameObject enemy; // make into list of enemy templates ?? where should it be serialized?
+    public List<Enemy> enemyTemplates;
     public SpawnPoint[] SpawnPoints;    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // deserialize here into enemyTemplates
+
         GameObject selector = Instantiate(button, level_selector.transform);
         selector.transform.localPosition = new Vector3(0, 130);
         selector.GetComponent<MenuSelectorController>().spawner = this;
@@ -59,6 +64,22 @@ public class EnemySpawner : MonoBehaviour
         }
         yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
         GameManager.Instance.state = GameManager.GameState.WAVEEND;
+    }
+
+    IEnumerator SpawnEnemy(Enemy enemy)
+    {
+        SpawnPoint spawn_point = SpawnPoints[Random.Range(0, SpawnPoints.Length)];
+        Vector2 offset = Random.insideUnitCircle * 1.8f;
+
+        Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
+        GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
+
+        new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(0);
+        EnemyController en = new_enemy.GetComponent<EnemyController>();
+        en.hp = new Hittable(enemy.health, Hittable.Team.MONSTERS, new_enemy);
+        en.speed = enemy.speed;
+        GameManager.Instance.AddEnemy(new_enemy);
+        yield return new WaitForSeconds(0.5f);
     }
 
     IEnumerator SpawnZombie()
