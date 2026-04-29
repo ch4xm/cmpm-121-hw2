@@ -57,10 +57,14 @@ public class EnemySpawner : MonoBehaviour
         levels = ReadLevels();
         enemyTypes = ReadEnemies();
 
-        GameObject selector = Instantiate(button, level_selector.transform);
-        selector.transform.localPosition = new Vector3(0, 130);
-        selector.GetComponent<MenuSelectorController>().spawner = this;
-        selector.GetComponent<MenuSelectorController>().SetLevel("Start"); // Shouldnt start yet, only start when level button is clicked
+        for (int i = 0; i < levels.Count; ++i)
+        {
+            GameObject selector = Instantiate(button, level_selector.transform);
+            selector.transform.localPosition = new Vector3(0, 130 - 100 * i); // TODO: make this dynamic to the number of bottoms
+            selector.GetComponent<MenuSelectorController>().spawner = this;
+            selector.GetComponent<MenuSelectorController>().SetLevel(levels[i].name); // Shouldnt start yet, only start when level button is clicked
+        }
+
     }
 
     private List<Level> ReadLevels()
