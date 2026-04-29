@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RPNEvaluator;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,15 +12,18 @@ using UnityEngine.UI;
 
 using Random = UnityEngine.Random;
 
+#nullable enable
+
 // helper class for reading level.json
 public class Spawn
 {
     public string enemy;
     public string count;
-    public string hp;
-    public string? delay;
     public List<int>? sequence;
-    public string location;
+    public string? delay;
+    public string? location;
+    public string? hp;
+    public string? speed;
     public string? damage;
 }
 
@@ -48,7 +52,7 @@ public class EnemySpawner : MonoBehaviour
     public GameObject enemy;
     public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
     public List<Level> levels;
-    public SpawnPoint[] SpawnPoints;    
+    public SpawnPoint[] SpawnPoints;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -116,28 +120,85 @@ public class EnemySpawner : MonoBehaviour
             GameManager.Instance.countdown--;
         }
         GameManager.Instance.state = GameManager.GameState.INWAVE;
-        for (int i = 0; i < 10; ++i)
+
+        var variables = new Dictionary<string, int>
         {
-            yield return SpawnEnemy("zombie");
+            { "wave", 3 } // TODO: change to current wave
+        };
+        
+        // Algorithm:
+        // first pass, run through the current level's spawns, calculate all the RPN strings into numbers and put into list
+        // then calculate maximum of all counts in this new list
+        // iterate from 0 to this maximum
+        // for each count: if current i < count:
+        //      get value at sequence index of i % len(sequence)
+        //      spawn enemy that number of times
+        foreach (var item in levels[0].spawns)  // todo: change to current level
+        {
+            var currentEnemy = enemyTypes[item.enemy];
+
+            variables["base"] = currentEnemy.hp;
+            var calculatedHealth = RPNEvaluator.RPNEvaluator.Evaluate(item.hp ?? "base", variables);
+
+            variables["base"] = currentEnemy.damage;
+            var calculatedDamage = RPNEvaluator.RPNEvaluator.Evaluate(item.damage ?? "base", variables);
+
+            variables["base"] = currentEnemy.speed;
+            var calculatedSpeed = RPNEvaluator.RPNEvaluator.Evaluate(item.speed ?? "base", variables);
+
+            var location = item.location ?? "random";
+
+            var calculatedCount = RPNEvaluator.RPNEvaluator.Evaluate(item.count, variables);
+            var sequence = item.sequence ?? new List<int>() { 1 };
+            var calculatedDelay = RPNEvaluator.RPNEvaluator.Evaluate(item.delay ?? "2", variables);
+
+            var enemyData = new Enemy()
+            {
+                name = currentEnemy.name,
+                sprite = currentEnemy.sprite,
+                hp = calculatedHealth,
+                damage = calculatedDamage,
+                speed = calculatedSpeed,
+            };
+
+            int spawned = 0;
+
+            for (int i = 0; i < calculatedCount; i++)
+            {
+                int spawnAmount = Math.Min(sequence[i % sequence.Count], calculatedCount - spawned);    // Cap spawned amount to not go over total count for spawn
+
+                for (int j = 0; j < spawnAmount; j++)
+                {
+                    yield return SpawnEnemy(enemyData, location);
+                }
+
+                spawned += spawnAmount;
+                if (spawned >= calculatedCount)
+                {
+                    break;
+                }
+                yield return new WaitForSeconds(calculatedDelay);
+            }
         }
+
         yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
         GameManager.Instance.state = GameManager.GameState.WAVEEND;
     }
 
-    IEnumerator SpawnEnemy(string enemyName)
+    IEnumerator SpawnEnemy(Enemy enemyData, string location)
     {
-        var enemyType = enemyTypes[enemyName];
-
         SpawnPoint spawn_point = SpawnPoints[Random.Range(0, SpawnPoints.Length)];
         Vector2 offset = Random.insideUnitCircle * 1.8f;
 
         Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
         GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
 
-        new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(enemyType.sprite);
+        new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(enemyData.sprite);
         EnemyController en = new_enemy.GetComponent<EnemyController>();
-        en.hp = new Hittable(enemyType.hp, Hittable.Team.MONSTERS, new_enemy);
-        en.speed = enemyType.speed;
+
+        en.hp = new Hittable(enemyData.hp, Hittable.Team.MONSTERS, new_enemy);
+        en.speed = enemyData.speed;
+        en.damage = enemyData.damage;
         GameManager.Instance.AddEnemy(new_enemy);
         yield return new WaitForSeconds(0.5f);
     }
