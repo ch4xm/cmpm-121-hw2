@@ -40,9 +40,9 @@ public class Enemy
 {
     public string name;
     public int sprite;
-    public int hp;
-    public int speed;
-    public int damage;
+    public float hp;
+    public float speed;
+    public float damage;
 }
 
 public class EnemySpawner : MonoBehaviour
@@ -53,6 +53,8 @@ public class EnemySpawner : MonoBehaviour
     public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
     public List<Level> levels;
     public SpawnPoint[] SpawnPoints;
+
+    private int activeSpawnGroups = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -112,6 +114,8 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator SpawnWave()
     {
+        activeSpawnGroups = 0;
+
         GameManager.Instance.state = GameManager.GameState.COUNTDOWN;
         GameManager.Instance.countdown = 3;
         for (int i = 3; i > 0; i--)
@@ -121,11 +125,8 @@ public class EnemySpawner : MonoBehaviour
         }
         GameManager.Instance.state = GameManager.GameState.INWAVE;
 
-        var variables = new Dictionary<string, int>
-        {
-            { "wave", 3 } // TODO: change to current wave
-        };
-        
+
+
         // Algorithm:
         // first pass, run through the current level's spawns, calculate all the RPN strings into numbers and put into list
         // then calculate maximum of all counts in this new list
@@ -133,56 +134,77 @@ public class EnemySpawner : MonoBehaviour
         // for each count: if current i < count:
         //      get value at sequence index of i % len(sequence)
         //      spawn enemy that number of times
+
+        List<Coroutine> routines = new();
+
         foreach (var item in levels[0].spawns)  // todo: change to current level
         {
-            var currentEnemy = enemyTypes[item.enemy];
+            activeSpawnGroups++;
+            routines.Add(StartCoroutine(SpawnGroup(item, 3))); // Spawn coroutine so each spawn group spawns simultaneously
+        } // TODO: change to current wave
 
-            variables["base"] = currentEnemy.hp;
-            var calculatedHealth = RPNEvaluator.RPNEvaluator.Evaluate(item.hp ?? "base", variables);
+        //foreach (var routine in routines)
+        //{
+        //    yield return routine;
+        //}
 
-            variables["base"] = currentEnemy.damage;
-            var calculatedDamage = RPNEvaluator.RPNEvaluator.Evaluate(item.damage ?? "base", variables);
+        yield return new WaitUntil(() => activeSpawnGroups == 0);   // Only allow win condition once all enemies have spawned
+        yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
+        GameManager.Instance.state = GameManager.GameState.WAVEEND;
+    }
 
-            variables["base"] = currentEnemy.speed;
-            var calculatedSpeed = RPNEvaluator.RPNEvaluator.Evaluate(item.speed ?? "base", variables);
+    IEnumerator SpawnGroup(Spawn item, int wave)
+    {
+        var variables = new Dictionary<string, float>
+        {
+            { "wave", wave }
+        };
 
-            var location = item.location ?? "random";
+        var currentEnemy = enemyTypes[item.enemy];
 
-            var calculatedCount = RPNEvaluator.RPNEvaluator.Evaluate(item.count, variables);
-            var sequence = item.sequence ?? new List<int>() { 1 };
-            var calculatedDelay = RPNEvaluator.RPNEvaluator.Evaluate(item.delay ?? "2", variables);
+        variables["base"] = currentEnemy.hp;
+        var calculatedHealth = RPNEvaluator.RPNEvaluator.Evaluatef(item.hp ?? "base", variables);
 
-            var enemyData = new Enemy()
+        variables["base"] = currentEnemy.damage;
+        var calculatedDamage = RPNEvaluator.RPNEvaluator.Evaluatef(item.damage ?? "base", variables);
+
+        variables["base"] = currentEnemy.speed;
+        var calculatedSpeed = RPNEvaluator.RPNEvaluator.Evaluatef(item.speed ?? "base", variables);
+
+        var location = item.location ?? "random";
+
+        var calculatedCount = (int) RPNEvaluator.RPNEvaluator.Evaluatef(item.count, variables);
+        var sequence = item.sequence ?? new List<int>() { 1 };
+        var calculatedDelay = RPNEvaluator.RPNEvaluator.Evaluatef(item.delay ?? "2", variables);
+
+        var enemyData = new Enemy()
+        {
+            name = currentEnemy.name,
+            sprite = currentEnemy.sprite,
+            hp = calculatedHealth,
+            damage = calculatedDamage,
+            speed = calculatedSpeed,
+        };
+
+        int spawned = 0;
+
+        for (int i = 0; i < calculatedCount; i++)
+        {
+            int spawnAmount = Math.Min(sequence[i % sequence.Count], calculatedCount - spawned);    // Cap spawned amount to not go over total count for spawn
+
+            for (int j = 0; j < spawnAmount; j++)
             {
-                name = currentEnemy.name,
-                sprite = currentEnemy.sprite,
-                hp = calculatedHealth,
-                damage = calculatedDamage,
-                speed = calculatedSpeed,
-            };
+                yield return SpawnEnemy(enemyData, location);
+            }
 
-            int spawned = 0;
-
-            for (int i = 0; i < calculatedCount; i++)
+            spawned += spawnAmount;
+            if (spawned < calculatedCount)
             {
-                int spawnAmount = Math.Min(sequence[i % sequence.Count], calculatedCount - spawned);    // Cap spawned amount to not go over total count for spawn
-
-                for (int j = 0; j < spawnAmount; j++)
-                {
-                    yield return SpawnEnemy(enemyData, location);
-                }
-
-                spawned += spawnAmount;
-                if (spawned >= calculatedCount)
-                {
-                    break;
-                }
                 yield return new WaitForSeconds(calculatedDelay);
             }
         }
 
-        yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
-        GameManager.Instance.state = GameManager.GameState.WAVEEND;
+        activeSpawnGroups--;
     }
 
     IEnumerator SpawnEnemy(Enemy enemyData, string location)
@@ -196,9 +218,9 @@ public class EnemySpawner : MonoBehaviour
         new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(enemyData.sprite);
         EnemyController en = new_enemy.GetComponent<EnemyController>();
 
-        en.hp = new Hittable(enemyData.hp, Hittable.Team.MONSTERS, new_enemy);
-        en.speed = enemyData.speed;
-        en.damage = enemyData.damage;
+        en.hp = new Hittable(Mathf.RoundToInt(enemyData.hp), Hittable.Team.MONSTERS, new_enemy);
+        en.speed = (int) enemyData.speed;
+        en.damage = (int) enemyData.damage;
         GameManager.Instance.AddEnemy(new_enemy);
         yield return new WaitForSeconds(0.5f);
     }
