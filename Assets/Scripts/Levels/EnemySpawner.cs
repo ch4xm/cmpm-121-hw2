@@ -54,8 +54,10 @@ public class EnemySpawner : MonoBehaviour
     public GameObject enemy;
     public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
     public List<Level> levels;
-    public int current_level = -1;
     public SpawnPoint[] SpawnPoints;
+
+    public int current_level = -1;
+    public int current_wave = 1;
 
     public float start_time;
     public float end_time;
@@ -107,6 +109,7 @@ public class EnemySpawner : MonoBehaviour
     
     public void InterWaveMenu()
     { 
+        GameManager.Instance.state = GameManager.GameState.MENU;
         foreach (Transform child in level_selector.transform)
         {
             Destroy(child.gameObject);
@@ -168,8 +171,6 @@ public class EnemySpawner : MonoBehaviour
             end_time = Time.time;
             InterWaveMenu();
         }
-
-
     }
 
     public void StartLevel(string levelname)
@@ -190,6 +191,15 @@ public class EnemySpawner : MonoBehaviour
 
     public void NextWave()
     {
+        current_wave++;
+        var level = levels[current_level];
+        if (level.waves.HasValue && current_wave > level.waves.Value)
+        {
+            Console.WriteLine("You won!");
+
+            // User won, show message
+            // return;
+        }
         StartCoroutine(SpawnWave());
     }
 
@@ -207,26 +217,14 @@ public class EnemySpawner : MonoBehaviour
         }
         GameManager.Instance.state = GameManager.GameState.INWAVE;
         start_time = Time.time;
-        // Algorithm:
-        // first pass, run through the current level's spawns, calculate all the RPN strings into numbers and put into list
-        // then calculate maximum of all counts in this new list
-        // iterate from 0 to this maximum
-        // for each count: if current i < count:
-        //      get value at sequence index of i % len(sequence)
-        //      spawn enemy that number of times
 
         List<Coroutine> routines = new();
 
         foreach (var item in levels[current_level].spawns)  // todo: change to current level
         {
             activeSpawnGroups++;
-            routines.Add(StartCoroutine(SpawnGroup(item, 3))); // Spawn coroutine so each spawn group spawns simultaneously
+            routines.Add(StartCoroutine(SpawnGroup(item, current_wave))); // Spawn coroutine so each spawn group spawns simultaneously
         } // TODO: change to current wave
-
-        //foreach (var routine in routines)
-        //{
-        //    yield return routine;
-        //}
 
         yield return new WaitUntil(() => activeSpawnGroups == 0);   // Only allow win condition once all enemies have spawned
         yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
@@ -298,7 +296,7 @@ public class EnemySpawner : MonoBehaviour
         Vector2 offset = Random.insideUnitCircle * 1.8f;
 
         Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
-        GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
+         GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
 
         new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(enemyData.sprite);
         EnemyController en = new_enemy.GetComponent<EnemyController>();
