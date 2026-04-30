@@ -123,7 +123,7 @@ public class EnemySpawner : MonoBehaviour
         
         // Add TextMeshProUGUI to the new GameObject
         TextMeshProUGUI stat = statObject.AddComponent<TextMeshProUGUI>();
-        stat.text = "Time Spend: " + Mathf.Round(end_time - start_time) + "s";
+        stat.text = "Time Spent: " + Mathf.Round(end_time - start_time) + "s";
         stat.alignment = TextAlignmentOptions.Center;
         stat.fontSize = 36;
         stat.color  = Color.black;
