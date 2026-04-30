@@ -97,8 +97,9 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // if wave is finished and all enemies are dead, prompt player to start next wave
-        if (GameManager.Instance.player.GetComponent<PlayerController>().hp.hp <= 0)
+        // if the player is dead, propmt for new game
+        if (GameManager.Instance.state != GameManager.GameState.PREGAME
+                && GameManager.Instance.player.GetComponent<PlayerController>().hp.hp <= 0)
         {
             NewGame();
         }
