@@ -123,11 +123,10 @@ public class EnemySpawner : MonoBehaviour
         
         // Add TextMeshProUGUI to the new GameObject
         TextMeshProUGUI stat = statObject.AddComponent<TextMeshProUGUI>();
-        stat.text = "Time Spend: " + Mathf.Round(end_time - start_time) + "s";
+        stat.text = "Time Spent: " + Mathf.Round(end_time - start_time) + "s";
         stat.alignment = TextAlignmentOptions.Center;
         stat.fontSize = 36;
         stat.color  = Color.black;
-        
         
         GameObject selector = Instantiate(button, level_selector.transform);
         selector.transform.localPosition = new Vector3(0, 100);
@@ -196,7 +195,8 @@ public class EnemySpawner : MonoBehaviour
         if (level.waves.HasValue && current_wave > level.waves.Value)
         {
             Console.WriteLine("You won!");
-
+            NewGameMenu();
+            //InterWaveMenu();
             // User won, show message
             // return;
         }
