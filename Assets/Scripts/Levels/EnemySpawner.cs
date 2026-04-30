@@ -9,6 +9,7 @@ using System.Linq;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 using Random = UnityEngine.Random;
 
@@ -96,7 +97,12 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        // if wave is finished and all enemies are dead, prompt player to start next wave
+        if (GameManager.Instance.state == GameManager.GameState.WAVEEND
+            && GameManager.Instance.enemy_count == 0)
+        {
+            InterWave();
+        }
     }
 
     public void StartLevel(string levelname)
@@ -162,6 +168,18 @@ public class EnemySpawner : MonoBehaviour
         GameManager.Instance.state = GameManager.GameState.WAVEEND;
     }
 
+    public void InterWave()
+    { 
+        //GameManager.Instance.state = GameManager.GameState.INTERWAVE;
+        GameObject selector = Instantiate(button, level_selector.transform);
+        selector.transform.localPosition = new Vector3(0, 0);
+        selector.GetComponentInChildren<TextMeshProUGUI>().text = "NextWave";
+        selector.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            this.NextWave();
+        });
+    }
+    
     IEnumerator SpawnGroup(Spawn item, int wave)
     {
         var variables = new Dictionary<string, float>

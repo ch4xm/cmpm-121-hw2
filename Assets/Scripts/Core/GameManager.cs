@@ -11,7 +11,8 @@ public class GameManager
         INWAVE,
         WAVEEND,
         COUNTDOWN,
-        GAMEOVER
+        GAMEOVER,
+        INTERWAVE
     }
     public GameState state;
 
