@@ -98,6 +98,12 @@ public class EnemySpawner : MonoBehaviour
     void Update()
     {
         // if wave is finished and all enemies are dead, prompt player to start next wave
+        if (GameManager.Instance.player.GetComponent<PlayerController>().hp.hp <= 0)
+        {
+            NewGame();
+        }
+        
+        // if wave is finished and all enemies are dead, prompt player to start next wave
         if (GameManager.Instance.state == GameManager.GameState.WAVEEND
             && GameManager.Instance.enemy_count == 0)
         {
@@ -168,6 +174,16 @@ public class EnemySpawner : MonoBehaviour
         GameManager.Instance.state = GameManager.GameState.WAVEEND;
     }
 
+    public void NewGame()
+    {
+        GameObject selector = Instantiate(button, level_selector.transform);
+        selector.transform.localPosition = new Vector3(0, 0);
+        selector.GetComponentInChildren<TextMeshProUGUI>().text = "New Game";
+        selector.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            Start();
+        });
+    }
     public void InterWave()
     { 
         //GameManager.Instance.state = GameManager.GameState.INTERWAVE;
@@ -176,7 +192,7 @@ public class EnemySpawner : MonoBehaviour
         selector.GetComponentInChildren<TextMeshProUGUI>().text = "NextWave";
         selector.GetComponent<Button>().onClick.AddListener(() =>
         {
-            this.NextWave();
+            NextWave();
         });
     }
     
