@@ -10,8 +10,9 @@ using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using Unity.VisualScripting;
 using Random = UnityEngine.Random;
+using State = Unity.VisualScripting.State;
 
 #nullable enable
 
@@ -55,6 +56,9 @@ public class EnemySpawner : MonoBehaviour
     public List<Level> levels;
     public int current_level = -1;
     public SpawnPoint[] SpawnPoints;
+
+    public float start_time;
+    public float end_time;
 
     private int activeSpawnGroups = 0;
 
@@ -103,12 +107,25 @@ public class EnemySpawner : MonoBehaviour
     
     public void InterWaveMenu()
     { 
-        GameManager.Instance.state = GameManager.GameState.MENU;
         foreach (Transform child in level_selector.transform)
         {
             Destroy(child.gameObject);
         }
         level_selector.gameObject.SetActive(true);
+
+        // Create a new GameObject for the text
+        GameObject statObject = new GameObject("StatText");
+        statObject.transform.SetParent(level_selector.transform);
+        statObject.transform.localPosition = new Vector3(0, 0);
+        
+        // Add TextMeshProUGUI to the new GameObject
+        TextMeshProUGUI stat = statObject.AddComponent<TextMeshProUGUI>();
+        stat.text = "Time Spend: " + Mathf.Round(end_time - start_time) + "s";
+        stat.alignment = TextAlignmentOptions.Center;
+        stat.fontSize = 36;
+        stat.color  = Color.black;
+        
+        
         GameObject selector = Instantiate(button, level_selector.transform);
         selector.transform.localPosition = new Vector3(0, 100);
         selector.GetComponent<MenuSelectorController>().spawner = this;
@@ -137,8 +154,6 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(GameManager.Instance.state);
-
         if ((GameManager.Instance.state == GameManager.GameState.INWAVE ||
              GameManager.Instance.state == GameManager.GameState.WAVEEND)
             && GameManager.Instance.player.GetComponent<PlayerController>().hp.hp == 0)
@@ -150,6 +165,7 @@ public class EnemySpawner : MonoBehaviour
         if (GameManager.Instance.state == GameManager.GameState.WAVEEND
             && GameManager.Instance.enemy_count == 0)
         {
+            end_time = Time.time;
             InterWaveMenu();
         }
 
@@ -190,7 +206,7 @@ public class EnemySpawner : MonoBehaviour
             GameManager.Instance.countdown--;
         }
         GameManager.Instance.state = GameManager.GameState.INWAVE;
-        
+        start_time = Time.time;
         // Algorithm:
         // first pass, run through the current level's spawns, calculate all the RPN strings into numbers and put into list
         // then calculate maximum of all counts in this new list
