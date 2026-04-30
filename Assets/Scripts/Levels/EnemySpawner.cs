@@ -134,6 +134,32 @@ public class EnemySpawner : MonoBehaviour
         selector.GetComponent<MenuSelectorController>().spawner = this;
         selector.GetComponent<MenuSelectorController>().SetLevel("Next Wave");
     }
+    public void WinMenu()
+    { 
+        GameManager.Instance.state = GameManager.GameState.MENU;
+        foreach (Transform child in level_selector.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        level_selector.gameObject.SetActive(true);
+
+        // Create a new GameObject for the text
+        GameObject statObject = new GameObject("StatText");
+        statObject.transform.SetParent(level_selector.transform);
+        statObject.transform.localPosition = new Vector3(0, 0);
+        
+        // Add TextMeshProUGUI to the new GameObject
+        TextMeshProUGUI stat = statObject.AddComponent<TextMeshProUGUI>();
+        stat.text = "You Win!";
+        stat.alignment = TextAlignmentOptions.Center;
+        stat.fontSize = 36;
+        stat.color  = Color.black;
+        
+        GameObject selector = Instantiate(button, level_selector.transform);
+        selector.transform.localPosition = new Vector3(0, 100);
+        selector.GetComponent<MenuSelectorController>().spawner = this;
+        selector.GetComponent<MenuSelectorController>().SetLevel("New Game");
+    }
     
     private List<Level> ReadLevels()
     {
@@ -196,7 +222,7 @@ public class EnemySpawner : MonoBehaviour
         if (level.waves.HasValue && current_wave > level.waves.Value)
         {
             Console.WriteLine("You won!");
-
+            WinMenu();
             // User won, show message
             // return;
         }
