@@ -64,7 +64,18 @@ public class EnemySpawner : MonoBehaviour
         // deserialize here into enemyTemplates and levels
         levels = ReadLevels();
         enemyTypes = ReadEnemies();
+        
+        LevelSelectMenu();
+    }
 
+    public void LevelSelectMenu()
+    {
+        GameManager.Instance.state = GameManager.GameState.MENU;
+        foreach (Transform child in level_selector.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        level_selector.gameObject.SetActive(true);
         for (int i = 0; i < levels.Count; ++i)
         {
             GameObject selector = Instantiate(button, level_selector.transform);
@@ -72,9 +83,38 @@ public class EnemySpawner : MonoBehaviour
             selector.GetComponent<MenuSelectorController>().spawner = this;
             selector.GetComponent<MenuSelectorController>().SetLevel(levels[i].name); // Shouldnt start yet, only start when level button is clicked
         }
-
     }
-
+    
+    public void NewGameMenu()
+    {
+        GameManager.Instance.RemoveAllEnemies();
+        
+        GameManager.Instance.state = GameManager.GameState.MENU;
+        foreach (Transform child in level_selector.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        level_selector.gameObject.SetActive(true);
+        GameObject selector = Instantiate(button, level_selector.transform);
+        selector.transform.localPosition = new Vector3(0, 100);
+        selector.GetComponent<MenuSelectorController>().spawner = this;
+        selector.GetComponent<MenuSelectorController>().SetLevel("New Game"); // TODO: this will leads to next wave instead of the selection menu?
+    }
+    
+    public void InterWaveMenu()
+    { 
+        GameManager.Instance.state = GameManager.GameState.MENU;
+        foreach (Transform child in level_selector.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        level_selector.gameObject.SetActive(true);
+        GameObject selector = Instantiate(button, level_selector.transform);
+        selector.transform.localPosition = new Vector3(0, 100);
+        selector.GetComponent<MenuSelectorController>().spawner = this;
+        selector.GetComponent<MenuSelectorController>().SetLevel("Next Wave");
+    }
+    
     private List<Level> ReadLevels()
     {
         // read levels.json
@@ -97,19 +137,16 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // if the player is dead, propmt for new game
-        if (GameManager.Instance.state != GameManager.GameState.PREGAME
-                && GameManager.Instance.player.GetComponent<PlayerController>().hp.hp <= 0)
-        {
-            NewGame();
-        }
+        Debug.Log(GameManager.Instance.state);
         
         // if wave is finished and all enemies are dead, prompt player to start next wave
         if (GameManager.Instance.state == GameManager.GameState.WAVEEND
             && GameManager.Instance.enemy_count == 0)
         {
-            InterWave();
+            InterWaveMenu();
         }
+
+
     }
 
     public void StartLevel(string levelname)
@@ -117,6 +154,7 @@ public class EnemySpawner : MonoBehaviour
         level_selector.gameObject.SetActive(false);
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
         GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
+        GameManager.Instance.player.GetComponent<PlayerController>().hp.OnDeath += NewGameMenu;
         for (int i = 0; i < levels.Count; ++i)
         {
             if (levels[i].name == levelname)
@@ -146,9 +184,7 @@ public class EnemySpawner : MonoBehaviour
             GameManager.Instance.countdown--;
         }
         GameManager.Instance.state = GameManager.GameState.INWAVE;
-
-
-
+        
         // Algorithm:
         // first pass, run through the current level's spawns, calculate all the RPN strings into numbers and put into list
         // then calculate maximum of all counts in this new list
@@ -173,28 +209,6 @@ public class EnemySpawner : MonoBehaviour
         yield return new WaitUntil(() => activeSpawnGroups == 0);   // Only allow win condition once all enemies have spawned
         yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
         GameManager.Instance.state = GameManager.GameState.WAVEEND;
-    }
-
-    public void NewGame()
-    {
-        GameObject selector = Instantiate(button, level_selector.transform);
-        selector.transform.localPosition = new Vector3(0, 0);
-        selector.GetComponentInChildren<TextMeshProUGUI>().text = "New Game";
-        selector.GetComponent<Button>().onClick.AddListener(() =>
-        {
-            Start();
-        });
-    }
-    public void InterWave()
-    { 
-        //GameManager.Instance.state = GameManager.GameState.INTERWAVE;
-        GameObject selector = Instantiate(button, level_selector.transform);
-        selector.transform.localPosition = new Vector3(0, 0);
-        selector.GetComponentInChildren<TextMeshProUGUI>().text = "NextWave";
-        selector.GetComponent<Button>().onClick.AddListener(() =>
-        {
-            NextWave();
-        });
     }
     
     IEnumerator SpawnGroup(Spawn item, int wave)

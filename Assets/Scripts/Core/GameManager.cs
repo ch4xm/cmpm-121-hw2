@@ -12,7 +12,7 @@ public class GameManager
         WAVEEND,
         COUNTDOWN,
         GAMEOVER,
-        INTERWAVE
+        MENU
     }
     public GameState state;
 
@@ -46,6 +46,11 @@ public class GameManager
         enemies.Remove(enemy);
     }
 
+    public void RemoveAllEnemies()
+    {
+        enemies.Clear();
+    }
+    
     public GameObject GetClosestEnemy(Vector3 point)
     {
         if (enemies == null || enemies.Count == 0) return null;
