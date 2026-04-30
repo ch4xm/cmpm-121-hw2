@@ -98,7 +98,7 @@ public class EnemySpawner : MonoBehaviour
         GameObject selector = Instantiate(button, level_selector.transform);
         selector.transform.localPosition = new Vector3(0, 100);
         selector.GetComponent<MenuSelectorController>().spawner = this;
-        selector.GetComponent<MenuSelectorController>().SetLevel("New Game"); // TODO: this will leads to next wave instead of the selection menu?
+        selector.GetComponent<MenuSelectorController>().SetLevel("New Game");
     }
     
     public void InterWaveMenu()
@@ -138,7 +138,14 @@ public class EnemySpawner : MonoBehaviour
     void Update()
     {
         Debug.Log(GameManager.Instance.state);
-        
+
+        if ((GameManager.Instance.state == GameManager.GameState.INWAVE ||
+             GameManager.Instance.state == GameManager.GameState.WAVEEND)
+            && GameManager.Instance.player.GetComponent<PlayerController>().hp.hp == 0)
+        {
+            NewGameMenu();
+        }
+            
         // if wave is finished and all enemies are dead, prompt player to start next wave
         if (GameManager.Instance.state == GameManager.GameState.WAVEEND
             && GameManager.Instance.enemy_count == 0)
@@ -154,7 +161,6 @@ public class EnemySpawner : MonoBehaviour
         level_selector.gameObject.SetActive(false);
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
         GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
-        GameManager.Instance.player.GetComponent<PlayerController>().hp.OnDeath += NewGameMenu;
         for (int i = 0; i < levels.Count; ++i)
         {
             if (levels[i].name == levelname)

@@ -29,7 +29,6 @@ public class MenuSelectorController : MonoBehaviour
     {
         if (level == "New Game") spawner.LevelSelectMenu();
         else if (level == "Next Wave") spawner.NextWave();
-        
-        spawner.StartLevel(level);
+        else spawner.StartLevel(level);
     }
 }
