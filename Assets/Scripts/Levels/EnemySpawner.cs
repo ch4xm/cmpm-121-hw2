@@ -62,6 +62,8 @@ public class EnemySpawner : MonoBehaviour
     public float start_time;
     public float end_time;
 
+    private bool gameWon = false;
+
     private int activeSpawnGroups = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -189,11 +191,40 @@ public class EnemySpawner : MonoBehaviour
         {
             NewGameMenu();
         }
-            
+
+        if (current_level < 0 || current_level >= levels.Count)
+            return;
+
+
+        //var level = levels[current_level];
+        //if (level.waves.HasValue && current_wave > level.waves.Value)
+        //{
+        //    Console.WriteLine("You won!");
+        //    gameWon = true;
+        //    WinMenu();
+        //    return;
+        //}
+
         // if wave is finished and all enemies are dead, prompt player to start next wave
-        if (GameManager.Instance.state == GameManager.GameState.WAVEEND
+        if (!gameWon && 
+            GameManager.Instance.state == GameManager.GameState.WAVEEND
             && GameManager.Instance.enemy_count == 0)
         {
+
+
+            if (!gameWon)
+            {
+                var level = levels[current_level];
+
+                if (level.waves.HasValue && current_wave >= level.waves.Value)
+                {
+                    gameWon = true;
+                    end_time = Time.time;
+                    WinMenu();
+                    return;
+                }
+            }
+
             end_time = Time.time;
             InterWaveMenu();
         }
@@ -201,6 +232,7 @@ public class EnemySpawner : MonoBehaviour
 
     public void StartLevel(string levelname)
     {
+        gameWon = false;
         level_selector.gameObject.SetActive(false);
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
         GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
@@ -218,14 +250,7 @@ public class EnemySpawner : MonoBehaviour
     public void NextWave()
     {
         current_wave++;
-        var level = levels[current_level];
-        if (level.waves.HasValue && current_wave > level.waves.Value)
-        {
-            Console.WriteLine("You won!");
-            WinMenu();
-            // User won, show message
-            // return;
-        }
+
         StartCoroutine(SpawnWave());
     }
 

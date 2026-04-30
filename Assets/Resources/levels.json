@@ -13,7 +13,7 @@
             },
 			{
                 "enemy": "toad",
-                "count": "2 wave 4 / *",
+                "count": "1 2 wave 4 / * +",
                 "hp": "base",
                 "delay": "3",
                 "sequence": [1],
