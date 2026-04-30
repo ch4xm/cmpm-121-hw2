@@ -52,6 +52,7 @@ public class EnemySpawner : MonoBehaviour
     public GameObject enemy;
     public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
     public List<Level> levels;
+    public int current_level = -1;
     public SpawnPoint[] SpawnPoints;
 
     private int activeSpawnGroups = 0;
@@ -103,6 +104,14 @@ public class EnemySpawner : MonoBehaviour
         level_selector.gameObject.SetActive(false);
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
         GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
+        for (int i = 0; i < levels.Count; ++i)
+        {
+            if (levels[i].name == levelname)
+            {
+                current_level = i;
+                break;
+            }
+        }
         StartCoroutine(SpawnWave());
     }
 
@@ -137,7 +146,7 @@ public class EnemySpawner : MonoBehaviour
 
         List<Coroutine> routines = new();
 
-        foreach (var item in levels[0].spawns)  // todo: change to current level
+        foreach (var item in levels[current_level].spawns)  // todo: change to current level
         {
             activeSpawnGroups++;
             routines.Add(StartCoroutine(SpawnGroup(item, 3))); // Spawn coroutine so each spawn group spawns simultaneously
@@ -210,6 +219,11 @@ public class EnemySpawner : MonoBehaviour
     IEnumerator SpawnEnemy(Enemy enemyData, string location)
     {
         SpawnPoint spawn_point = SpawnPoints[Random.Range(0, SpawnPoints.Length)];
+        while ("random " + spawn_point.kind.ToString().ToLower() != location && location != "random")
+        {
+            spawn_point = SpawnPoints[Random.Range(0, SpawnPoints.Length)];
+        }
+        
         Vector2 offset = Random.insideUnitCircle * 1.8f;
 
         Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
