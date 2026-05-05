@@ -48,7 +48,9 @@ public class PlayerController : MonoBehaviour
 
     void OnAttack(InputValue value)
     {
-        if (GameManager.Instance.state == GameManager.GameState.PREGAME || GameManager.Instance.state == GameManager.GameState.GAMEOVER) return;
+        if (GameManager.Instance.state == GameManager.GameState.PREGAME ||
+            GameManager.Instance.state == GameManager.GameState.GAMEOVER ||
+            GameManager.Instance.state == GameManager.GameState.MENU) return;
         Vector2 mouseScreen = Mouse.current.position.value;
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(mouseScreen);
         mouseWorld.z = 0;
@@ -58,11 +60,14 @@ public class PlayerController : MonoBehaviour
     void OnMove(InputValue value)
     {
         if (GameManager.Instance.state == GameManager.GameState.PREGAME || GameManager.Instance.state == GameManager.GameState.GAMEOVER) return;
+
         unit.movement = value.Get<Vector2>()*speed;
     }
 
     void Die()
     {
+        unit.movement = Vector2.zero;
+        GameManager.Instance.state = GameManager.GameState.GAMEOVER;
         Debug.Log("You Lost");
     }
 

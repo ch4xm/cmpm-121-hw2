@@ -9,7 +9,7 @@ public class GameManager
     {
         PREGAME,
         INWAVE,
-        WAVEEND,
+        WAVEEND,    // All enemies killed, game should show menu when this state is true
         COUNTDOWN,
         GAMEOVER,
         MENU
