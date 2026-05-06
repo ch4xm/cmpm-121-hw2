@@ -22,6 +22,8 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.Instance.state == GameManager.GameState.GAMEOVER) return;
+
         Vector3 direction = target.position - transform.position;
         if (direction.magnitude < 2f)
         {
