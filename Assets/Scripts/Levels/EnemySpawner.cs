@@ -56,7 +56,6 @@ public class EnemySpawner : MonoBehaviour
     public List<Level> levels;
     public SpawnPoint[] SpawnPoints;
 
-    public int current_level = -1;
     private bool gameWon = false;
 
     private int activeSpawnGroups = 0;
@@ -76,7 +75,7 @@ public class EnemySpawner : MonoBehaviour
         GameManager.Instance.state = GameManager.GameState.MENU;
         foreach (Transform child in level_selector.transform)
         {
-            Destroy(child.gameObject);
+            Destroy(child.gameObject);  // Clear old buttons
         }
         level_selector.gameObject.SetActive(true);
         for (int i = 0; i < levels.Count; ++i)
@@ -103,34 +102,7 @@ public class EnemySpawner : MonoBehaviour
         selector.GetComponent<MenuSelectorController>().spawner = this;
         selector.GetComponent<MenuSelectorController>().SetLevel("New Game");
     }
-    
-    //public void InterWaveMenu()
-    //{ 
-    //    GameManager.Instance.state = GameManager.GameState.MENU;
-    //    foreach (Transform child in level_selector.transform)
-    //    {
-    //        Destroy(child.gameObject);
-    //    }
-    //    level_selector.gameObject.SetActive(true);
 
-    //    // Create a new GameObject for the text
-    //    GameObject statObject = new GameObject("StatText");
-    //    statObject.transform.SetParent(level_selector.transform);
-    //    statObject.transform.localPosition = new Vector3(0, 0);
-        
-    //    // Add TextMeshProUGUI to the new GameObject
-    //    TextMeshProUGUI stat = statObject.AddComponent<TextMeshProUGUI>();
-    //    stat.text = "Time Spent: " + Mathf.Round(end_time - start_time) + "s";
-    //    stat.alignment = TextAlignmentOptions.Center;
-    //    stat.fontSize = 36;
-    //    stat.color  = Color.black;
-        
-        
-    //    GameObject selector = Instantiate(button, level_selector.transform);
-    //    selector.transform.localPosition = new Vector3(0, 100);
-    //    selector.GetComponent<MenuSelectorController>().spawner = this;
-    //    selector.GetComponent<MenuSelectorController>().SetLevel("Next Wave");
-    //}
     public void WinMenu()
     { 
         GameManager.Instance.state = GameManager.GameState.MENU;
@@ -186,49 +158,12 @@ public class EnemySpawner : MonoBehaviour
         //{
         //    NewGameMenu();
         //}
-
-        //if (current_level < 0 || current_level >= levels.Count)
-        //    return;
-
-
-        //var level = levels[current_level];
-        //if (level.waves.HasValue && current_wave > level.waves.Value)
-        //{
-        //    Console.WriteLine("You won!");
-        //    gameWon = true;
-        //    WinMenu();
-        //    return;
-        //}
-
-        // if wave is finished and all enemies are dead, prompt player to start next wave
-        //if (!gameWon && 
-        //    GameManager.Instance.state == GameManager.GameState.WAVEEND
-        //    && GameManager.Instance.enemy_count == 0)
-        //{
-
-
-        //    if (!gameWon)
-        //    {
-        //        var level = levels[current_level];
-
-        //        if (level.waves.HasValue && current_wave >= level.waves.Value)
-        //        {
-        //            gameWon = true;
-        //            end_time = Time.time;
-        //            WinMenu();
-        //            return;
-        //        }
-        //    }
-
-        //    end_time = Time.time;
-        //    InterWaveMenu();
-        //}
     }
 
     public void StartLevel(string levelname)
     {
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
-        current_level = levels.FindIndex(x => x.name == levelname);
+        GameManager.Instance.currentLevel = levels.FindIndex(x => x.name == levelname);
         level_selector.gameObject.SetActive(false);
 
         GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
@@ -246,6 +181,7 @@ public class EnemySpawner : MonoBehaviour
     IEnumerator SpawnWave()
     {
         activeSpawnGroups = 0;
+        Level currentLevel = levels[GameManager.Instance.currentLevel];
 
         GameManager.Instance.state = GameManager.GameState.COUNTDOWN;
         GameManager.Instance.countdown = 3;
@@ -259,7 +195,7 @@ public class EnemySpawner : MonoBehaviour
 
         List<Coroutine> routines = new();
 
-        foreach (var item in levels[current_level].spawns)  // todo: change to current level
+        foreach (var item in currentLevel.spawns)  // todo: change to current level
         {
             activeSpawnGroups++;
             routines.Add(StartCoroutine(SpawnGroup(item, GameManager.Instance.currentWave))); // Spawn coroutine so each spawn group spawns simultaneously
@@ -267,8 +203,14 @@ public class EnemySpawner : MonoBehaviour
 
         yield return new WaitUntil(() => activeSpawnGroups == 0);   // Only allow win condition once all enemies have spawned
         yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
+
         GameManager.Instance.state = GameManager.GameState.WAVEEND;
         GameManager.Instance.waveEndTime = Time.time;
+        if (currentLevel.waves.HasValue && GameManager.Instance.currentWave >= currentLevel.waves.Value)
+        {
+            GameManager.Instance.state = GameManager.GameState.GAMEOVER;
+            WinMenu();
+        }
     }
 
     IEnumerator SpawnGroup(Spawn item, int wave)

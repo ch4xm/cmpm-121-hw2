@@ -10,6 +10,8 @@ public class EnemyController : MonoBehaviour
     public bool dead;
     public int damage;
 
+    public float cooldown = 0.75f;
+
     public float last_attack;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -22,7 +24,11 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.state == GameManager.GameState.GAMEOVER) return;
+        if (GameManager.Instance.state != GameManager.GameState.INWAVE)
+        {
+            GetComponent<Unit>().movement = Vector2.zero;
+            return;
+        }
 
         Vector3 direction = target.position - transform.position;
         if (direction.magnitude < 2f)
@@ -37,7 +43,7 @@ public class EnemyController : MonoBehaviour
     
     void DoAttack()
     {
-        if (last_attack + 2 < Time.time)
+        if (last_attack + cooldown < Time.time)
         {
             last_attack = Time.time;
             target.gameObject.GetComponent<PlayerController>().hp.Damage(new Damage(damage, Damage.Type.PHYSICAL));

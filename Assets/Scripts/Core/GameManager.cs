@@ -18,6 +18,7 @@ public class GameManager
 
     public int countdown;
 
+    public int currentLevel = -1;
     public int currentWave = 1;
     public float waveStartTime;
     public float waveEndTime;
