@@ -1,10 +1,8 @@
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using RPNEvaluator;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEditorInternal;
 using UnityEngine;
@@ -52,11 +50,8 @@ public class EnemySpawner : MonoBehaviour
     public Image level_selector;
     public GameObject button;
     public GameObject enemy;
-    public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
-    public List<Level> levels;
-    public SpawnPoint[] SpawnPoints;
 
-    private bool gameWon = false;
+    public SpawnPoint[] SpawnPoints;
 
     private int activeSpawnGroups = 0;
 
@@ -64,8 +59,7 @@ public class EnemySpawner : MonoBehaviour
     void Start()
     {
         // deserialize here into enemyTemplates and levels
-        levels = ReadLevels();
-        enemyTypes = ReadEnemies();
+
         
         LevelSelectMenu();
     }
@@ -78,30 +72,15 @@ public class EnemySpawner : MonoBehaviour
             Destroy(child.gameObject);  // Clear old buttons
         }
         level_selector.gameObject.SetActive(true);
-        for (int i = 0; i < levels.Count; ++i)
+        for (int i = 0; i < GameManager.Instance.levels.Count; ++i)
         {
             GameObject selector = Instantiate(button, level_selector.transform);
             selector.transform.localPosition = new Vector3(0, 130 - 100 * i); // TODO: make this dynamic to the number of bottoms
             selector.GetComponent<MenuSelectorController>().spawner = this;
-            selector.GetComponent<MenuSelectorController>().SetLevel(levels[i].name); // Shouldnt start yet, only start when level button is clicked
+            selector.GetComponent<MenuSelectorController>().SetLevel(GameManager.Instance.levels[i].name); // Shouldnt start yet, only start when level button is clicked
         }
     }
-    
-    public void NewGameMenu()
-    {
-        GameManager.Instance.RemoveAllEnemies();
-        
-        GameManager.Instance.state = GameManager.GameState.MENU;
-        foreach (Transform child in level_selector.transform)
-        {
-            Destroy(child.gameObject);
-        }
-        level_selector.gameObject.SetActive(true);
-        GameObject selector = Instantiate(button, level_selector.transform);
-        selector.transform.localPosition = new Vector3(0, 100);
-        selector.GetComponent<MenuSelectorController>().spawner = this;
-        selector.GetComponent<MenuSelectorController>().SetLevel("New Game");
-    }
+
 
     public void WinMenu()
     { 
@@ -129,25 +108,6 @@ public class EnemySpawner : MonoBehaviour
         selector.GetComponent<MenuSelectorController>().spawner = this;
         selector.GetComponent<MenuSelectorController>().SetLevel("New Game");
     }
-    
-    private List<Level> ReadLevels()
-    {
-        // read levels.json
-        string json = File.ReadAllText("Assets/Resources/levels.json");
-        var levels = JsonConvert.DeserializeObject<List<Level>>(json);
-
-        return levels;
-    }
-    private Dictionary<string, Enemy> ReadEnemies()
-    {
-        // read enemies.json
-        string json = File.ReadAllText("Assets/Resources/enemies.json");
-
-        var result = JsonConvert.DeserializeObject<List<Enemy>>(json);
-        var enemiesDict = result.ToDictionary(x => x.name, x => x); // Convert result to dict of name to enemy pairs for easy enemy access
-
-        return enemiesDict;
-    }
 
     // Update is called once per frame
     void Update()
@@ -160,13 +120,17 @@ public class EnemySpawner : MonoBehaviour
         //}
     }
 
-    public void StartLevel(string levelname)
+    public void StartLevel(string levelName)
     {
+        StopAllCoroutines();
+        GameManager.Instance.SetupLevel(levelName);
+
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
-        GameManager.Instance.currentLevel = levels.FindIndex(x => x.name == levelname);
         level_selector.gameObject.SetActive(false);
 
         GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
+
+
         StartCoroutine(SpawnWave());
     }
 
@@ -181,7 +145,6 @@ public class EnemySpawner : MonoBehaviour
     IEnumerator SpawnWave()
     {
         activeSpawnGroups = 0;
-        Level currentLevel = levels[GameManager.Instance.currentLevel];
 
         GameManager.Instance.state = GameManager.GameState.COUNTDOWN;
         GameManager.Instance.countdown = 3;
@@ -195,7 +158,7 @@ public class EnemySpawner : MonoBehaviour
 
         List<Coroutine> routines = new();
 
-        foreach (var item in currentLevel.spawns)  // todo: change to current level
+        foreach (var item in GameManager.Instance.currentLevel.spawns)  // todo: change to current level
         {
             activeSpawnGroups++;
             routines.Add(StartCoroutine(SpawnGroup(item, GameManager.Instance.currentWave))); // Spawn coroutine so each spawn group spawns simultaneously
@@ -206,7 +169,7 @@ public class EnemySpawner : MonoBehaviour
 
         GameManager.Instance.state = GameManager.GameState.WAVEEND;
         GameManager.Instance.waveEndTime = Time.time;
-        if (currentLevel.waves.HasValue && GameManager.Instance.currentWave >= currentLevel.waves.Value)
+        if (GameManager.Instance.currentLevel.waves.HasValue && GameManager.Instance.currentWave >= GameManager.Instance.currentLevel.waves.Value)
         {
             GameManager.Instance.state = GameManager.GameState.GAMEOVER;
             WinMenu();
@@ -220,7 +183,7 @@ public class EnemySpawner : MonoBehaviour
             { "wave", wave }
         };
 
-        var currentEnemy = enemyTypes[item.enemy];
+        var currentEnemy = GameManager.Instance.enemyTypes[item.enemy];
 
         variables["base"] = currentEnemy.hp;
         var calculatedHealth = RPNEvaluator.RPNEvaluator.Evaluatef(item.hp ?? "base", variables);

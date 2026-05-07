@@ -1,7 +1,9 @@
-using UnityEngine;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+
 
 public class GameManager 
 {
@@ -18,7 +20,10 @@ public class GameManager
 
     public int countdown;
 
-    public int currentLevel = -1;
+    public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
+    public List<Level> levels;
+
+    public Level currentLevel;
     public int currentWave = 1;
     public float waveStartTime;
     public float waveEndTime;
@@ -54,9 +59,20 @@ public class GameManager
 
     public void RemoveAllEnemies()
     {
+        foreach (var item in enemies)
+        {
+            UnityEngine.Object.Destroy(item);
+        }
         enemies.Clear();
     }
-    
+
+    public void SetupLevel(string levelName)
+    {
+        RemoveAllEnemies();
+        Instance.currentWave = 1;
+        Instance.currentLevel = levels.Find(x => x.name == levelName);
+    }
+
     public GameObject GetClosestEnemy(Vector3 point)
     {
         if (enemies == null || enemies.Count == 0) return null;
@@ -66,6 +82,9 @@ public class GameManager
 
     private GameManager()
     {
+        levels = DataLoader.ReadLevels();
+        enemyTypes = DataLoader.ReadEnemies();
+
         enemies = new List<GameObject>();
     }
 }
