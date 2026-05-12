@@ -36,8 +36,8 @@ public class SpellData
     public DamageData damage;
     public int mana_cost;
     public float cooldown;
-    public ProjectileData projectile;
-    public ProjectileData secondary_projectile;
+    public Projectile projectile;
+    public Projectile secondary_projectile;
 }
 
 public class DamageData
@@ -46,10 +46,10 @@ public class DamageData
     public string type;
 }
 
-public class ProjectileData
-{
-    public int sprite;
-    public string trajectory;
-    public float speed;
-    public float? lifetime;
-}
+//public class ProjectileData
+//{
+//    public int sprite;
+//    public string trajectory;
+//    public string speed;
+//    public float? lifetime;
+//}

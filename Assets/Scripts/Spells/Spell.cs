@@ -2,24 +2,53 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using Unity.VisualScripting;
+using UnityEditor.AdaptivePerformance.Editor;
 using UnityEngine;
 using static UnityEngine.UI.CanvasScaler;
 
 public class Projectile
 {
-    public int sprite;
-    public string trajectory;
-    public float speed;
-    public float? lifetime;
+    private int sprite;
+    private string trajectory;
+    private string speed;
+    private float? lifetime;
 
-    public Projectile(ProjectileData data)
+    public Projectile(int sprite, string trajectory, string speed, float? lifetime)
     {
-        sprite = data.sprite;
-        trajectory = data.trajectory;
-        speed = data.speed;
-        lifetime = data.lifetime;
+        this.sprite = sprite;
+        this.trajectory = trajectory;
+        this.speed = speed;
+        this.lifetime = lifetime;
     }
+    public float GetSpeed()
+    {
+        var dict = new Dictionary<string, int>
+        {
+            { "power", 1 },
+            { "wave", GameManager.Instance.currentWave }
+        };
+        float calculated = RPNEvaluator.RPNEvaluator.Evaluatef(speed, dict);
+
+        return calculated;
+    }
+
+    public int GetSprite()
+    {
+        return sprite; 
+    }
+
+    public float? GetLifetime()
+    {
+        return lifetime;
+    }
+
+    public string GetTrajectory()
+    {
+        return trajectory;
+    }
+
 }
 
 public class Spell
@@ -28,14 +57,15 @@ public class Spell
     public SpellCaster owner;
     public Hittable.Team team;
 
-    public string name;
-    public string description;
-    public int icon;
-    public DamageData damage;
-    public int mana_cost;
-    public float cooldown;
-    public ProjectileData projectile;
-    public ProjectileData secondary_projectile;
+    private string name;
+    private string description;
+    private int icon;
+    private DamageData damage;
+    private int mana_cost;
+    private float cooldown;
+
+    private Projectile projectile;
+    private Projectile secondary_projectile;
 
     public Spell(SpellCaster owner, SpellData data)
     {
@@ -55,6 +85,11 @@ public class Spell
     public string GetName()
     {
         return name;
+    }
+
+    public string GetDescription()
+    {
+        return description;
     }
 
     public int GetManaCost()
@@ -96,7 +131,7 @@ public class Spell
     {
         this.team = team;
 
-        GameManager.Instance.projectileManager.CreateProjectile(projectile.sprite, projectile.trajectory, where, target - where, projectile.speed, OnHit, projectile.lifetime);
+        GameManager.Instance.projectileManager.CreateProjectile(projectile.GetSprite(), projectile.GetTrajectory(), where, target - where, projectile.GetSpeed(), OnHit, projectile.GetLifetime());
 
         yield return new WaitForEndOfFrame();
     }
