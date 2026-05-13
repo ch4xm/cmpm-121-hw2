@@ -22,9 +22,6 @@ public class SpellBuilder
         spells = DataLoader.ReadSpells();
         //Console.WriteLine(spells);
     }
-
-
-
 }
 
 // Helper classes for parsing spells from JSON
@@ -34,7 +31,7 @@ public class SpellData
     public string description;
     public int icon;
     public DamageData damage;
-    public int mana_cost;
+    public string mana_cost;
     public float cooldown;
     public Projectile projectile;
     public Projectile secondary_projectile;

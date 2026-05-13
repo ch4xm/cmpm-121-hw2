@@ -10,12 +10,13 @@ using static UnityEngine.UI.CanvasScaler;
 
 public class Projectile
 {
+    public Spell parent;
     private int sprite;
     private string trajectory;
     private string speed;
-    private float? lifetime;
+    private string? lifetime;
 
-    public Projectile(int sprite, string trajectory, string speed, float? lifetime)
+    public Projectile(int sprite, string trajectory, string speed, string? lifetime)
     {
         this.sprite = sprite;
         this.trajectory = trajectory;
@@ -24,24 +25,24 @@ public class Projectile
     }
     public float GetSpeed()
     {
-        var dict = new Dictionary<string, int>
-        {
-            { "power", 1 },
-            { "wave", GameManager.Instance.currentWave }
-        };
-        float calculated = RPNEvaluator.RPNEvaluator.Evaluatef(speed, dict);
+        var result = parent.CalculateProperty(speed);
 
-        return calculated;
+        return result;
     }
 
     public int GetSprite()
     {
-        return sprite; 
+        return sprite;
     }
 
     public float? GetLifetime()
     {
-        return lifetime;
+        if (lifetime is null)
+        {
+            return null;
+        }
+        var result = parent.CalculateProperty(lifetime);
+        return result;
     }
 
     public string GetTrajectory()
@@ -61,7 +62,7 @@ public class Spell
     private string description;
     private int icon;
     private DamageData damage;
-    private int mana_cost;
+    private string mana_cost;
     private float cooldown;
 
     private Projectile projectile;
@@ -77,9 +78,17 @@ public class Spell
         damage = data.damage;
         mana_cost = data.mana_cost;
         cooldown = data.cooldown;
-
-        projectile = data.projectile;
-        secondary_projectile = data.secondary_projectile;
+        
+        if (data.projectile != null)
+        {
+            projectile = data.projectile;
+            projectile.parent = this;
+        }
+        if (data.secondary_projectile != null)
+        {
+            secondary_projectile = data.secondary_projectile;
+            secondary_projectile.parent = this;
+        }
     }
 
     public string GetName()
@@ -94,22 +103,32 @@ public class Spell
 
     public int GetManaCost()
     {
-        return mana_cost;
+        return 10;
+        var result = CalculateProperty(mana_cost);
+
+        return Mathf.RoundToInt(result);
+    }
+
+    public float CalculateProperty(string formula)
+    {
+        var dict = new Dictionary<string, int>
+        {
+            { "power", owner.spell_power },
+            { "wave", GameManager.Instance.currentWave }
+        };
+        float calculated = RPNEvaluator.RPNEvaluator.Evaluatef(formula, dict);
+        return calculated;
     }
 
     public int GetDamage()
     {
-        var dict = new Dictionary<string, int>
-        {
-            { "power", 1 },
-            { "wave", GameManager.Instance.currentWave }
-        };
-        float calculated = RPNEvaluator.RPNEvaluator.Evaluatef(damage.amount, dict);
-        return Mathf.RoundToInt(calculated);
+        var result = CalculateProperty(damage.amount);
+
+        return Mathf.RoundToInt(result);
     }
     
     public Damage.Type GetDamageType()
-    {
+    {   
         return Damage.TypeFromString(damage.type);
     }
     public float GetCooldown()
