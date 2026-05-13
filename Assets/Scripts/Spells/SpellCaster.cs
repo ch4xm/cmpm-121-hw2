@@ -11,7 +11,13 @@ public class SpellCaster
     public int spell_power;
 
     public Hittable.Team team;
+
+    public List<Spell> spells = new ();
     public Spell spell;
+
+    public int selectedSpellIndex = 0;
+    public Spell CurrentSpell =>
+        spells[selectedSpellIndex];
 
     public IEnumerator ManaRegeneration()
     {
@@ -30,7 +36,9 @@ public class SpellCaster
         this.mana_reg = mana_reg;
         this.team = team;
         this.spell_power = 0;
-        spell = new SpellBuilder().Build(this);
+        var spell = new SpellBuilder(this).Build("arcane_bolt");
+        
+        spells.Add(spell);  // Add first spell
     }
 
     public IEnumerator Cast(Vector3 where, Vector3 target)
