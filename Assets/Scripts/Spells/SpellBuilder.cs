@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 
 using System;
+using JetBrains.Annotations;
 
 
 public class SpellBuilder 
@@ -13,7 +14,14 @@ public class SpellBuilder
 
     public Spell Build(SpellCaster owner)
     {
-        return new Spell(owner, spells["arcane_bolt"]); // Defaults to bolt for now, need to make this work with UI
+        // for testing
+        var test_modifier = new ModifierData();
+        test_modifier.name = "test_modifier";
+        test_modifier.damage_multiplier = "2";
+        test_modifier.projectile_trajectory = "spiraling";
+        ModifierData[] modifiers = new ModifierData[] { test_modifier };
+        
+        return new Spell(owner, spells["arcane_bolt"], modifiers) ; // Defaults to bolt for now, need to make this work with UI
     }
 
    
@@ -35,6 +43,21 @@ public class SpellData
     public float cooldown;
     public Projectile projectile;
     public Projectile secondary_projectile;
+}
+
+// Helper classes for parsing modifiers from JSON
+public class ModifierData
+{
+    public string name;
+    public string description;
+    [CanBeNull] public string damage_multiplier;
+    [CanBeNull] public string mana_multiplier;
+    [CanBeNull] public string cooldown_multiplier;
+    [CanBeNull] public string speed_multiplier;
+    [CanBeNull] public string angle;
+    [CanBeNull] public string delay;
+    [CanBeNull] public string projectile_trajectory;
+    [CanBeNull] public string mana_adder;
 }
 
 public class DamageData

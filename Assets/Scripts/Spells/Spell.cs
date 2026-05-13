@@ -11,10 +11,10 @@ using static UnityEngine.UI.CanvasScaler;
 public class Projectile
 {
     public Spell parent;
-    private int sprite;
-    private string trajectory;
-    private string speed;
-    private string? lifetime;
+    public int sprite;
+    public string trajectory;
+    public string speed;
+    public string? lifetime;
 
     public Projectile(int sprite, string trajectory, string speed, string? lifetime)
     {
@@ -68,26 +68,52 @@ public class Spell
     private Projectile projectile;
     private Projectile secondary_projectile;
 
-    public Spell(SpellCaster owner, SpellData data)
+    public Spell(SpellCaster owner, SpellData spell_data, ModifierData[] modifiers)
     {
         this.owner = owner;
 
-        name = data.name;
-        description = data.description;
-        icon = data.icon;
-        damage = data.damage;
-        mana_cost = data.mana_cost;
-        cooldown = data.cooldown;
+        name = spell_data.name;
+        description = spell_data.description;
+        icon = spell_data.icon;
+        damage = spell_data.damage;
+        mana_cost = spell_data.mana_cost;
+        cooldown = spell_data.cooldown;
         
-        if (data.projectile != null)
+        projectile = spell_data.projectile;
+        projectile.parent = this;
+        
+        if (spell_data.secondary_projectile != null)
         {
-            projectile = data.projectile;
-            projectile.parent = this;
-        }
-        if (data.secondary_projectile != null)
-        {
-            secondary_projectile = data.secondary_projectile;
+            secondary_projectile = spell_data.secondary_projectile;
             secondary_projectile.parent = this;
+        }
+
+        foreach (var modifier in modifiers)
+        {
+            if (modifier.damage_multiplier != null)
+            {
+                damage.amount += (" " + modifier.damage_multiplier + " *");
+                Debug.Log("new damage: " +  damage.amount); // testing
+            }
+            if (modifier.mana_multiplier != null)
+            {
+                mana_cost += (" " + modifier.mana_multiplier + " *");
+            }
+            if (modifier.projectile_trajectory != null)
+            {
+                projectile.trajectory = modifier.projectile_trajectory;
+                Debug.Log("new trajectory: " + projectile.trajectory); // testing
+            }
+            if (modifier.speed_multiplier != null)
+            {
+                projectile.speed += (" " + modifier.speed_multiplier + " *");
+            }
+            if (modifier.cooldown_multiplier != null)
+            {
+                cooldown *= Convert.ToSingle(modifier.cooldown_multiplier);
+            }
+            // TODO: mana_adder
+            // TODO: angle and delay for secondary projectile
         }
     }
 
