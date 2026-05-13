@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
+using Newtonsoft.Json.Linq;
 public class DataLoader
 {
     public static List<Level> ReadLevels()
@@ -25,12 +27,36 @@ public class DataLoader
         return enemiesDict;
     }
 
-    public static Dictionary<string, SpellData> ReadSpells()
+    public class SpellReadResult
+    {
+        public Dictionary<string, SpellData> Spells { get; set; } = new();
+        public Dictionary<string, ModifierData> Modifiers { get; set; } = new();
+    }
+
+    public static SpellReadResult ReadSpells()
     {
         // read and deserialize spells.json
         string json = File.ReadAllText("Assets/Resources/spells.json");
-        var spells = JsonConvert.DeserializeObject<Dictionary<string, SpellData>>(json);
-        
-        return spells;
+
+        SpellReadResult result = new();
+
+
+        var parsedSpells = JsonConvert.DeserializeObject<Dictionary<string, Object>>(json);
+
+        foreach (var spell in parsedSpells)
+        {
+            var obj = (JObject) spell.Value;
+            if (obj.ContainsKey("projectile"))
+            {
+                result.Spells.Add(spell.Key, obj.ToObject<SpellData>());
+            }
+            else
+            {
+                result.Modifiers.Add(spell.Key, obj.ToObject<ModifierData>());
+            }
+        }
+        JsonConvert.DeserializeObject<Dictionary<string, SpellData>>(json);
+
+        return result;
     }
 }
