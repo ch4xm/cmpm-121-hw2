@@ -129,7 +129,6 @@ public class Spell
 
     public int GetManaCost()
     {
-        return 10;
         var result = CalculateProperty(mana_cost);
 
         return Mathf.RoundToInt(result);

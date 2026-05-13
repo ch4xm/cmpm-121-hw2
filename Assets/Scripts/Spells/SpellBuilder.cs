@@ -1,16 +1,17 @@
-using UnityEngine;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-
-using System;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
+using static DataLoader;
 
 
 public class SpellBuilder 
 {
     private Dictionary<string, SpellData> spells;
+    private Dictionary<string, ModifierData> modifiers;
 
     public Spell Build(SpellCaster owner)
     {
@@ -19,16 +20,19 @@ public class SpellBuilder
         test_modifier.name = "test_modifier";
         test_modifier.damage_multiplier = "2";
         test_modifier.projectile_trajectory = "spiraling";
-        ModifierData[] modifiers = new ModifierData[] { test_modifier };
+        ModifierData[] selectedModifiers = new ModifierData[] { modifiers["homing"], modifiers["speed_amp"] };
         
-        return new Spell(owner, spells["arcane_bolt"], modifiers) ; // Defaults to bolt for now, need to make this work with UI
+        
+        return new Spell(owner, spells["arcane_bolt"], selectedModifiers) ; // Defaults to bolt for now, need to make this work with UI
     }
 
    
     public SpellBuilder()
     {
-        spells = DataLoader.ReadSpells();
-        //Console.WriteLine(spells);
+        SpellReadResult result = ReadSpells();
+
+        spells = result.Spells;
+        modifiers = result.Modifiers;
     }
 }
 
@@ -50,14 +54,14 @@ public class ModifierData
 {
     public string name;
     public string description;
-    [CanBeNull] public string damage_multiplier;
-    [CanBeNull] public string mana_multiplier;
-    [CanBeNull] public string cooldown_multiplier;
-    [CanBeNull] public string speed_multiplier;
-    [CanBeNull] public string angle;
-    [CanBeNull] public string delay;
-    [CanBeNull] public string projectile_trajectory;
-    [CanBeNull] public string mana_adder;
+    public string? damage_multiplier;
+    public string? mana_multiplier;
+    public string? cooldown_multiplier;
+    public string? speed_multiplier;
+    public string? angle;
+    public string? delay;
+    public string? projectile_trajectory;
+    public string? mana_adder;
 }
 
 public class DamageData
@@ -65,11 +69,3 @@ public class DamageData
     public string amount;
     public string type;
 }
-
-//public class ProjectileData
-//{
-//    public int sprite;
-//    public string trajectory;
-//    public string speed;
-//    public float? lifetime;
-//}
