@@ -10,6 +10,8 @@ using JetBrains.Annotations;
 using Unity.Mathematics;
 using UnityEngine;
 using static DataLoader;
+using Random = UnityEngine.Random;
+using NUnit.Framework;
 
 
 public class SpellBuilder
@@ -24,13 +26,7 @@ public class SpellBuilder
 
     public Spell Build(string spellName, List<string> modifierNames = null) // if no modifiers passed just make basic spell
     {
-        // for testing
-        //var test_modifier = new ModifierData();
-        //test_modifier.name = "test_modifier";
-        //test_modifier.damage_multiplier = "2";
-        //test_modifier.projectile_trajectory = "spiraling";
-
-        var spellData = spells[spellName];
+        SpellData spellData = spells[spellName];
 
 
         // Map list of modifier names to modifierdata classes
@@ -41,10 +37,29 @@ public class SpellBuilder
         return spell;
     }
 
-    //public Spell BuildRandomSpell()
-    //{
+    public Spell BuildRandomSpell()
+    {
+        string key = spellKeys[Random.Range(0, spellKeys.Count)];
+        SpellData randomBaseSpell = spells[key];
 
-    //}
+        List<ModifierData> result = new();
+
+
+        int modifierCount = Random.Range(1, 4);
+        for (int i = 0; i < Math.Min(modifierCount, modifierKeys.Count); i++)
+        {
+            string modifierKey = modifierKeys[Random.Range(0, modifierKeys.Count)];
+            ModifierData data = modifiers[modifierKey];
+
+            if (!result.Contains(data))
+            {
+                result.Add(data);
+            }
+        }
+
+        var randomSpell = new Spell(owner, randomBaseSpell, result);
+        return randomSpell;
+    }
 
     //private Spell CreateBaseSpell(string key)
     //{

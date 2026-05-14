@@ -73,15 +73,20 @@ public class Spell
     private float delay;
     private bool has_secondary_projectile = false;
 
+    
+
     private float stun_time = 0;
     private float last_stun_time = 0;
 
     private Projectile projectile;
     private Projectile secondary_projectile;
+
+    List<ModifierData> modifiers;
     
     public Spell(SpellCaster owner, SpellData spell_data, List<ModifierData> modifiers)
     {
         this.owner = owner;
+        this.modifiers = new List<ModifierData>(modifiers);
 
         name = spell_data.name;
         description = spell_data.description;
@@ -96,6 +101,7 @@ public class Spell
         projectile = spell_data.projectile;
         projectile.parent = this;
 
+
         if (spell_data.secondary_projectile != null)
         {
             secondary_projectile = spell_data.secondary_projectile;
@@ -105,6 +111,7 @@ public class Spell
 
         if (!has_secondary_projectile) multishot *= (int)CalculateProperty(N);
             
+
         foreach (var modifier in modifiers)
         {
             if (modifier.time != null)
