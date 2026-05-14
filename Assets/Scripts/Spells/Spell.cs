@@ -117,7 +117,7 @@ public class Spell
             }
             if (modifier.mana_adder != null)
             {
-                mana_cost += (" " + modifier.mana_adder);
+                mana_cost += (" " + modifier.mana_adder + " +");
             }
 
             if (modifier.angle != null)
