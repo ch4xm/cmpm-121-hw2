@@ -129,14 +129,12 @@ public class EnemySpawner : MonoBehaviour
         level_selector.gameObject.SetActive(false);
 
         GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
-
-
+        
         StartCoroutine(SpawnWave());
     }
 
     public void NextWave()
     {
-        GameManager.Instance.NextWave();
         GameManager.Instance.currentWave++;
 
         StartCoroutine(SpawnWave());
@@ -145,6 +143,8 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator SpawnWave()
     {
+        GameManager.Instance.player.GetComponent<PlayerController>().LevelUp(GameManager.Instance.currentWave);
+        
         activeSpawnGroups = 0;
 
         GameManager.Instance.state = GameManager.GameState.COUNTDOWN;

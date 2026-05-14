@@ -72,8 +72,14 @@ public class PlayerController : MonoBehaviour
         Debug.Log("You Lost");
     }
 
-    public void LevelUp()
+    public void LevelUp(int wave)
     {
-        spellcaster.spell_power += 5;
+        Dictionary<string, int> vars = new Dictionary<string, int>();
+        vars["wave"] = wave;
+        hp.SetMaxHP(RPNEvaluator.RPNEvaluator.Evaluate("95 wave 5 * +", vars));
+        spellcaster.max_mana = RPNEvaluator.RPNEvaluator.Evaluate("90 wave 10 * +", vars);
+        spellcaster.mana_reg = RPNEvaluator.RPNEvaluator.Evaluate("10 wave +", vars);
+        spellcaster.spell_power = RPNEvaluator.RPNEvaluator.Evaluate("wave 10 *", vars);
+        speed = 5;
     }
 }

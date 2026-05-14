@@ -72,12 +72,6 @@ public class GameManager
         Instance.currentWave = 1;
         Instance.currentLevel = levels.Find(x => x.name == levelName);
     }
-
-    public void NextWave()
-    {
-        Instance.currentWave++;
-        Instance.player.GetComponent<PlayerController>().LevelUp();
-    }
     
     public GameObject GetClosestEnemy(Vector3 point)
     {
