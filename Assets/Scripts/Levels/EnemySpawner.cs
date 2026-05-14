@@ -242,12 +242,12 @@ public class EnemySpawner : MonoBehaviour
         Vector2 offset = Random.insideUnitCircle * 1.8f;
 
         Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
-         GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
+        GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
 
         new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(enemyData.sprite);
         EnemyController en = new_enemy.GetComponent<EnemyController>();
 
-        en.hp = new Hittable(Mathf.RoundToInt(enemyData.hp), Hittable.Team.MONSTERS, new_enemy);
+        en.hp = new Hittable(Mathf.RoundToInt(enemyData.hp), Hittable.Team.MONSTERS, new_enemy, en);
         en.speed = (int) enemyData.speed;
         en.damage = (int) enemyData.damage;
         GameManager.Instance.AddEnemy(new_enemy);
