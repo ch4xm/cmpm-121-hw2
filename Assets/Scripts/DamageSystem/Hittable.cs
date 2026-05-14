@@ -22,6 +22,7 @@ public class Hittable
             OnDeath();
         }
     }
+    
 
     public event Action OnDeath;
 

@@ -56,7 +56,7 @@ public class GameManager
     {
         enemies.Remove(enemy);
     }
-
+    
     public void RemoveAllEnemies()
     {
         foreach (var item in enemies)
@@ -73,6 +73,12 @@ public class GameManager
         Instance.currentLevel = levels.Find(x => x.name == levelName);
     }
 
+    public void NextWave()
+    {
+        Instance.currentWave++;
+        Instance.player.GetComponent<PlayerController>().LevelUp();
+    }
+    
     public GameObject GetClosestEnemy(Vector3 point)
     {
         if (enemies == null || enemies.Count == 0) return null;

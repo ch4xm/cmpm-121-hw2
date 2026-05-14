@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void OnAttack(InputValue value)
@@ -72,4 +72,8 @@ public class PlayerController : MonoBehaviour
         Debug.Log("You Lost");
     }
 
+    public void LevelUp()
+    {
+        spellcaster.spell_power += 5;
+    }
 }

@@ -202,14 +202,12 @@ public class Spell
             Vector3 dir = target - where;
             
             dir = Quaternion.Euler(0, 0, -(multishot - 1) * angle / 2) * dir;
-            Debug.Log(angle);
             
             int shot_left = multishot;
             while (shot_left > 0)
             {
                 shot_left--;
-
-                Debug.Log(dir);
+                
                 GameManager.Instance.projectileManager.CreateProjectile(projectile.GetSprite(), projectile.GetTrajectory(), where, dir, projectile.GetSpeed(), OnHit, projectile.GetLifetime());
                 dir  = Quaternion.Euler(0, 0, angle) * dir;
             }
