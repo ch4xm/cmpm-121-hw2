@@ -63,16 +63,15 @@ public class Spell
     private int icon;
     private DamageData damage;
     private string mana_cost;
-    private float cooldown;
+    private string cooldown;
+    private int multicast = 1;
+    private int multishot = 1;
+    private float angle;
+    private float delay;
 
     private Projectile projectile;
     private Projectile secondary_projectile;
-
-    protected Spell(SpellCaster owner)
-    {
-        this.owner = owner;
-    }
-
+    
     public Spell(SpellCaster owner, SpellData spell_data, List<ModifierData> modifiers)
     {
         this.owner = owner;
@@ -107,7 +106,6 @@ public class Spell
             if (modifier.projectile_trajectory != null)
             {
                 projectile.trajectory = modifier.projectile_trajectory;
-                Debug.Log("new trajectory: " + projectile.trajectory); // testing
             }
             if (modifier.speed_multiplier != null)
             {
@@ -115,10 +113,25 @@ public class Spell
             }
             if (modifier.cooldown_multiplier != null)
             {
-                cooldown *= Convert.ToSingle(modifier.cooldown_multiplier);
+                cooldown += (" " + modifier.cooldown_multiplier + " *");
             }
-            // TODO: mana_adder
-            // TODO: angle and delay for secondary projectile
+            if (modifier.mana_adder != null)
+            {
+                mana_cost += (" " + modifier.mana_adder);
+            }
+
+            if (modifier.angle != null)
+            {
+                Debug.Log("multishot");
+                multishot ++;
+                angle = Convert.ToSingle(modifier.angle);
+            }
+            if (modifier.delay != null)
+            {
+                Debug.Log("multicast");
+                multicast ++;
+                delay = Convert.ToSingle(modifier.delay);
+            }
         }
     }
 
@@ -163,7 +176,7 @@ public class Spell
     }
     public float GetCooldown()
     {
-        return cooldown;
+        return CalculateProperty(cooldown);
     }
 
     public virtual int GetIcon()
@@ -176,12 +189,34 @@ public class Spell
         return (last_cast + GetCooldown() < Time.time);
     }
 
-    public virtual IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team, Modifiers modifiersContext)
+    public virtual IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team)
     {
         this.team = team;
 
-        GameManager.Instance.projectileManager.CreateProjectile(projectile.GetSprite(), projectile.GetTrajectory(), where, target - where, projectile.GetSpeed(), OnHit, projectile.GetLifetime());
+        
+        int cast_left = multicast; 
+        while (cast_left > 0)
+        {
+            cast_left--;
+            
+            Vector3 dir = target - where;
+            
+            dir = Quaternion.Euler(0, 0, -(multishot - 1) * angle / 2) * dir;
+            Debug.Log(angle);
+            
+            int shot_left = multishot;
+            while (shot_left > 0)
+            {
+                shot_left--;
 
+                Debug.Log(dir);
+                GameManager.Instance.projectileManager.CreateProjectile(projectile.GetSprite(), projectile.GetTrajectory(), where, dir, projectile.GetSpeed(), OnHit, projectile.GetLifetime());
+                dir  = Quaternion.Euler(0, 0, angle) * dir;
+            }
+
+            if (cast_left > 0) yield return new WaitForSeconds(delay);
+        }
+        
         yield return new WaitForEndOfFrame();
     }
 

@@ -1,4 +1,5 @@
-using JetBrains.Annotations;
+using UnityEngine;
+using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -54,6 +55,7 @@ public class SpellBuilder
     //    }
     //}
 
+    /*
     private ModifierSpell CreateModifierSpell(string key, Spell innerSpell)
     {
         if (!modifiers.ContainsKey(key))
@@ -85,6 +87,7 @@ public class SpellBuilder
                 //throw new Exception($"Unimplemented modifier with key {key}");
         }
     }
+    */
 
     public SpellBuilder(SpellCaster owner)
     {
@@ -104,7 +107,7 @@ public class SpellData
     public int icon;
     public DamageData damage;
     public string mana_cost;
-    public float cooldown;
+    public string cooldown;
     public Projectile projectile;
     public Projectile secondary_projectile;
 }

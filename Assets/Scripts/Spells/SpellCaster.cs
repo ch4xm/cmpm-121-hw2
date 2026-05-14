@@ -50,11 +50,11 @@ public class SpellCaster
 
     public IEnumerator Cast(Vector3 where, Vector3 target)
     {
-        Modifiers modifiersContext = new();
+        // Modifiers modifiersContext = new();
         if (mana >= CurrentSpell.GetManaCost() && CurrentSpell.IsReady())
         {
             mana -= CurrentSpell.GetManaCost();
-            yield return CurrentSpell.Cast(where, target, team, modifiersContext);
+            yield return CurrentSpell.Cast(where, target, team);
         }
         yield break;
     }
