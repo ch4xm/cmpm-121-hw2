@@ -91,5 +91,10 @@
       "angle": "10",
       "multishot": "3",
       "mana_multiplier": "2"
-   }
+   },
+  "add_mana": {
+    "name:": "add_mana",
+    "description": "reducing the sum total mana cost.",
+    "mana_adder": "-20"
+  }
 }
