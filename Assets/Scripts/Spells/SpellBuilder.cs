@@ -23,23 +23,20 @@ public class SpellBuilder
     public Spell Build(string spellName, List<string> modifierNames = null) // if no modifiers passed just make basic spell
     {
         // for testing
-        var test_modifier = new ModifierData();
-        test_modifier.name = "test_modifier";
-        test_modifier.damage_multiplier = "2";
-        test_modifier.projectile_trajectory = "spiraling";
-        ModifierData[] selectedModifiers = new ModifierData[] { modifiers["homing"], modifiers["speed_amp"] };
+        //var test_modifier = new ModifierData();
+        //test_modifier.name = "test_modifier";
+        //test_modifier.damage_multiplier = "2";
+        //test_modifier.projectile_trajectory = "spiraling";
 
-        Spell spell = CreateBaseSpell(spellName);
+        var spellData = spells[spellName];
 
-        if (modifierNames?.Count > 0)
-        {
-            foreach (var modifierKey in modifierNames)
-            {
-                spell = CreateModifierSpell(modifierKey, spell);
-            }
-        }
+
+        // Map list of modifier names to modifierdata classes
+        List<ModifierData> selectedModifiers = new();
+        modifierNames?.ForEach(key => selectedModifiers.Add(modifiers[key]));
+        
+        var spell = new Spell(owner, spellData, selectedModifiers); // Defaults to bolt for now, need to make this work with UI
         return spell;
-        //Spell spell = new Spell(owner, spells["arcane_bolt"], selectedModifiers) ; // Defaults to bolt for now, need to make this work with UI
     }
 
     //public Spell BuildRandomSpell()
@@ -47,15 +44,15 @@ public class SpellBuilder
 
     //}
 
-    private Spell CreateBaseSpell(string key)
-    {
-        switch (key) {
-            case "arcane_bolt":
-                return new Spell(owner, spells[key]);
-            default:
-                throw new Exception($"Unknown spell: {key}");
-        }
-    }
+    //private Spell CreateBaseSpell(string key)
+    //{
+    //    switch (key) {
+    //        case "arcane_bolt":
+    //            return new Spell(owner, spells[key]);
+    //        default:
+    //            throw new Exception($"Unknown spell: {key}");
+    //    }
+    //}
 
     private ModifierSpell CreateModifierSpell(string key, Spell innerSpell)
     {

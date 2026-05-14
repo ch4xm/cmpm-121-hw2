@@ -73,7 +73,7 @@ public class Spell
         this.owner = owner;
     }
 
-    public Spell(SpellCaster owner, SpellData spell_data)
+    public Spell(SpellCaster owner, SpellData spell_data, List<ModifierData> modifiers)
     {
         this.owner = owner;
 
@@ -93,83 +93,34 @@ public class Spell
             secondary_projectile.parent = this;
         }
 
-        //foreach (var modifier in modifiers)
-        //{
-        //    if (modifier.damage_multiplier != null)
-        //    {
-        //        damage.amount += (" " + modifier.damage_multiplier + " *");
-        //        Debug.Log("new damage: " + damage.amount); // testing
-        //    }
-        //    if (modifier.mana_multiplier != null)
-        //    {
-        //        mana_cost += (" " + modifier.mana_multiplier + " *");
-        //    }
-        //    if (modifier.projectile_trajectory != null)
-        //    {
-        //        projectile.trajectory = modifier.projectile_trajectory;
-        //        Debug.Log("new trajectory: " + projectile.trajectory); // testing
-        //    }
-        //    if (modifier.speed_multiplier != null)
-        //    {
-        //        projectile.speed += (" " + modifier.speed_multiplier + " *");
-        //    }
-        //    if (modifier.cooldown_multiplier != null)
-        //    {
-        //        cooldown *= Convert.ToSingle(modifier.cooldown_multiplier);
-        //    }
-        //    // TODO: mana_adder
-        //    // TODO: angle and delay for secondary projectile
-        //}
+        foreach (var modifier in modifiers)
+        {
+            if (modifier.damage_multiplier != null)
+            {
+                damage.amount += (" " + modifier.damage_multiplier + " *");
+                Debug.Log("new damage: " + damage.amount); // testing
+            }
+            if (modifier.mana_multiplier != null)
+            {
+                mana_cost += (" " + modifier.mana_multiplier + " *");
+            }
+            if (modifier.projectile_trajectory != null)
+            {
+                projectile.trajectory = modifier.projectile_trajectory;
+                Debug.Log("new trajectory: " + projectile.trajectory); // testing
+            }
+            if (modifier.speed_multiplier != null)
+            {
+                projectile.speed += (" " + modifier.speed_multiplier + " *");
+            }
+            if (modifier.cooldown_multiplier != null)
+            {
+                cooldown *= Convert.ToSingle(modifier.cooldown_multiplier);
+            }
+            // TODO: mana_adder
+            // TODO: angle and delay for secondary projectile
+        }
     }
-
-    //public Spell(SpellCaster owner, SpellData spell_data, ModifierData[] modifiers)
-    //{
-    //    this.owner = owner;
-
-    //    name = spell_data.name;
-    //    description = spell_data.description;
-    //    icon = spell_data.icon;
-    //    damage = spell_data.damage;
-    //    mana_cost = spell_data.mana_cost;
-    //    cooldown = spell_data.cooldown;
-
-    //    projectile = spell_data.projectile;
-    //    projectile.parent = this;
-
-    //    if (spell_data.secondary_projectile != null)
-    //    {
-    //        secondary_projectile = spell_data.secondary_projectile;
-    //        secondary_projectile.parent = this;
-    //    }
-
-    //    foreach (var modifier in modifiers)
-    //    {
-    //        if (modifier.damage_multiplier != null)
-    //        {
-    //            damage.amount += (" " + modifier.damage_multiplier + " *");
-    //            Debug.Log("new damage: " +  damage.amount); // testing
-    //        }
-    //        if (modifier.mana_multiplier != null)
-    //        {
-    //            mana_cost += (" " + modifier.mana_multiplier + " *");
-    //        }
-    //        if (modifier.projectile_trajectory != null)
-    //        {
-    //            projectile.trajectory = modifier.projectile_trajectory;
-    //            Debug.Log("new trajectory: " + projectile.trajectory); // testing
-    //        }
-    //        if (modifier.speed_multiplier != null)
-    //        {
-    //            projectile.speed += (" " + modifier.speed_multiplier + " *");
-    //        }
-    //        if (modifier.cooldown_multiplier != null)
-    //        {
-    //            cooldown *= Convert.ToSingle(modifier.cooldown_multiplier);
-    //        }
-    //         TODO: mana_adder
-    //         TODO: angle and delay for secondary projectile
-    //    }
-    //}
 
     public string GetName()
     {

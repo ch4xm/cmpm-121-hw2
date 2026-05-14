@@ -40,10 +40,11 @@ public class SpellCaster
         this.team = team;
         this.spell_power = 0;
 
-        var spell = builder.Build("arcane_bolt");
+        var testModifiers = new List<string> { "homing", "speed_amp", "damage_amp" };
+        var spell = builder.Build("arcane_bolt", testModifiers);
         var spell2 = builder.Build("arcane_bolt");
-        
-        spells.Add(spell);  // Add first spell
+
+        spells.Add(spell);  // Add default spell
         spells.Add(spell2);
     }
 

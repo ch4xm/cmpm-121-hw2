@@ -76,6 +76,12 @@
        "damage_multiplier": "0.75",
        "mana_adder": "10",
        "projectile_trajectory": "homing"
+   },
+   "stun": {
+	   "name": "stun",
+	   "description": "A ice cold spell that freezes your enemies for a bit, but deals lower damage.",
+       "damage_multiplier": "0.5",
+       "mana_multiplier": "1.25",
+	   "time": "1",
    }
-
 }
