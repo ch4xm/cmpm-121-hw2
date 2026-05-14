@@ -120,10 +120,12 @@ public class Spell
                 mana_cost += (" " + modifier.mana_adder + " +");
             }
 
+            if (modifier.multishot != null)
+            {
+                multishot *= Convert.ToInt32(modifier.multishot);
+            }
             if (modifier.angle != null)
             {
-                Debug.Log("multishot");
-                multishot ++;
                 angle = Convert.ToSingle(modifier.angle);
             }
             if (modifier.delay != null)

@@ -62,6 +62,7 @@
        "name": "split",
        "description": "Spell is cast twice in slightly different directions; increased mana cost.",
        "angle": "10",
+     "multishot": "2",
        "mana_multiplier": "1.5"
    },
    "chaos": {
@@ -82,6 +83,13 @@
 	   "description": "A ice cold spell that freezes your enemies for a bit, but deals lower damage.",
        "damage_multiplier": "0.5",
        "mana_multiplier": "1.25",
-	   "time": "1",
+	   "time": "1"
+   },
+  "triple_splitter": {
+      "name": "triple-split",
+      "description": "Spell is cast three times in slightly different directions; increased mana cost.",
+      "angle": "10",
+      "multishot": "3",
+      "mana_multiplier": "2"
    }
 }

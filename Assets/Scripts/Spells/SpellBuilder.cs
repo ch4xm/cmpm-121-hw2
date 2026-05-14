@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using Unity.Mathematics;
 using UnityEngine;
 using static DataLoader;
@@ -122,6 +123,8 @@ public class ModifierData
     public string? cooldown_multiplier;
     public string? speed_multiplier;
     public string? angle;
+    public string? multicast;
+    public string? multishot;
     public string? delay;
     public string? projectile_trajectory;
     public string? mana_adder;
