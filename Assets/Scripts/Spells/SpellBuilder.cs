@@ -107,6 +107,8 @@ public class SpellData
     public string description;
     public int icon;
     public DamageData damage;
+    public string N;
+    public string spray;
     public string mana_cost;
     public string cooldown;
     public Projectile projectile;

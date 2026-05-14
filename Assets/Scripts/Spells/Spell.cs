@@ -64,10 +64,14 @@ public class Spell
     private DamageData damage;
     private string mana_cost;
     private string cooldown;
+    private string N;
+    private string spray;
+    
     private int multicast = 1;
     private int multishot = 1;
-    private float angle;
+    private float angle = 0;
     private float delay;
+    private bool has_secondary_projectile = false;
 
     private Projectile projectile;
     private Projectile secondary_projectile;
@@ -82,6 +86,9 @@ public class Spell
         damage = spell_data.damage;
         mana_cost = spell_data.mana_cost;
         cooldown = spell_data.cooldown;
+        
+        N = spell_data.N ?? "1";
+        spray = spell_data.spray;
 
         projectile = spell_data.projectile;
         projectile.parent = this;
@@ -90,8 +97,11 @@ public class Spell
         {
             secondary_projectile = spell_data.secondary_projectile;
             secondary_projectile.parent = this;
+            has_secondary_projectile = true;
         }
 
+        if (!has_secondary_projectile) multishot *= (int)CalculateProperty(N);
+            
         foreach (var modifier in modifiers)
         {
             if (modifier.damage_multiplier != null)
@@ -209,9 +219,25 @@ public class Spell
             while (shot_left > 0)
             {
                 shot_left--;
+                if (spray != null)
+                {
+                    float spray_angle = UnityEngine.Random.Range(-CalculateProperty(spray) / 2, CalculateProperty(spray) / 2);
+                    dir = Quaternion.Euler(0, 0, spray_angle * Mathf.Rad2Deg) * dir;
+                }
                 
-                GameManager.Instance.projectileManager.CreateProjectile(projectile.GetSprite(), projectile.GetTrajectory(), where, dir, projectile.GetSpeed(), OnHit, projectile.GetLifetime());
-                dir  = Quaternion.Euler(0, 0, angle) * dir;
+                if (has_secondary_projectile)
+                {
+                    GameManager.Instance.projectileManager.CreateProjectile(
+                        projectile.GetSprite(), projectile.GetTrajectory(), 
+                        where, dir, projectile.GetSpeed(), OnHitWithSecondaryProjectile, projectile.GetLifetime());
+                }
+                else
+                {
+                    GameManager.Instance.projectileManager.CreateProjectile(
+                        projectile.GetSprite(), projectile.GetTrajectory(), 
+                        where, dir, projectile.GetSpeed(), OnHit, projectile.GetLifetime());
+                }
+                dir = Quaternion.Euler(0, 0, angle) * dir;
             }
 
             if (cast_left > 0) yield return new WaitForSeconds(delay);
@@ -220,13 +246,35 @@ public class Spell
         yield return new WaitForEndOfFrame();
     }
 
+
+    void OnHitWithSecondaryProjectile(Hittable other, Vector3 impact)
+    {
+        OnHit(other, impact);
+
+        int total_shots = (int)CalculateProperty(N);
+        int shot_left = total_shots;
+        Vector3 dir = Vector3.up;
+        while (shot_left > 0)
+        {
+            shot_left--;
+            
+            GameManager.Instance.projectileManager.CreateProjectile(
+                secondary_projectile.GetSprite(), secondary_projectile.GetTrajectory(), 
+                impact, dir, secondary_projectile.GetSpeed(), OnHit, secondary_projectile.GetLifetime());
+            dir = Quaternion.Euler(0, 0, 360f / total_shots) * dir;
+        }
+    }
+    
     void OnHit(Hittable other, Vector3 impact)
     {
         if (other.team != team)
         {
             other.Damage(new Damage(GetDamage(), GetDamageType()));
         }
-
     }
 
+    void CreateSecondaryProjectile(Hittable other, Vector3 impact)
+    {
+        
+    }
 }
