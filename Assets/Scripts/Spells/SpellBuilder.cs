@@ -128,6 +128,7 @@ public class ModifierData
     public string? delay;
     public string? projectile_trajectory;
     public string? mana_adder;
+    public string? time;
 }
 
 public class DamageData

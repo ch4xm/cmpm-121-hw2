@@ -69,6 +69,9 @@ public class Spell
     private float angle;
     private float delay;
 
+    private float stun_time = 0;
+    private float last_stun_time = 0;
+
     private Projectile projectile;
     private Projectile secondary_projectile;
     
@@ -94,6 +97,10 @@ public class Spell
 
         foreach (var modifier in modifiers)
         {
+            if (modifier.time != null)
+            {
+                stun_time = Convert.ToSingle(modifier.time);
+            }
             if (modifier.damage_multiplier != null)
             {
                 damage.amount += (" " + modifier.damage_multiplier + " *");
@@ -224,6 +231,14 @@ public class Spell
     {
         if (other.team != team)
         {
+            if (stun_time > 0 && last_stun_time + stun_time * 2 < Time.time)
+            {
+                if (other.parent is EnemyController enemy)
+                {
+                    enemy.Freeze(stun_time);
+                }
+                last_stun_time = Time.time;
+            }
             other.Damage(new Damage(GetDamage(), GetDamageType()));
         }
 

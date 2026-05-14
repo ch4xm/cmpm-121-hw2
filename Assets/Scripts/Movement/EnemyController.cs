@@ -2,13 +2,16 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-
+    private Unit unit;
     public Transform target;
     public int speed;
     public Hittable hp;
     public HealthBar healthui;
     public bool dead;
     public int damage;
+
+    public float freeze_timestamp = 0;
+    public float freeze_length = 0;
 
     public float cooldown = 0.75f;
 
@@ -19,14 +22,27 @@ public class EnemyController : MonoBehaviour
         target = GameManager.Instance.player.transform;
         hp.OnDeath += Die;
         healthui.SetHealth(hp);
+
+        unit = GetComponent<Unit>();
+    }
+
+    public void Freeze(float time)
+    {
+        freeze_timestamp = Time.time;
+        freeze_length = time;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Time.time - freeze_timestamp < freeze_length)   // Freeze enemy
+        {
+            unit.movement = Vector2.zero;
+            return;
+        }
         if (GameManager.Instance.state != GameManager.GameState.INWAVE)
         {
-            GetComponent<Unit>().movement = Vector2.zero;
+            unit.movement = Vector2.zero;
             return;
         }
 
@@ -37,7 +53,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            GetComponent<Unit>().movement = direction.normalized * speed;
+            unit.movement = direction.normalized * speed;
         }
     }
     
