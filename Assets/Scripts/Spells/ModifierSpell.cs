@@ -23,8 +23,4 @@ abstract class ModifierSpell : Spell
     {
         this.innerSpell = innerSpell;
     }
-
-
-    //public abstract IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team);
-
 }

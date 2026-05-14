@@ -12,8 +12,9 @@ public class SpellCaster
 
     public Hittable.Team team;
 
+    private SpellBuilder builder;
+
     public List<Spell> spells = new ();
-    public Spell spell;
 
     public int selectedSpellIndex = 0;
     public Spell CurrentSpell =>
@@ -31,22 +32,28 @@ public class SpellCaster
 
     public SpellCaster(int mana, int mana_reg, Hittable.Team team)
     {
+        this.builder = new SpellBuilder(this);
+
         this.mana = mana;
         this.max_mana = mana;
         this.mana_reg = mana_reg;
         this.team = team;
         this.spell_power = 0;
-        var spell = new SpellBuilder(this).Build("arcane_bolt");
+
+        var spell = builder.Build("arcane_bolt");
+        var spell2 = builder.Build("arcane_bolt");
         
         spells.Add(spell);  // Add first spell
+        spells.Add(spell2);
     }
 
     public IEnumerator Cast(Vector3 where, Vector3 target)
-    {        
-        if (mana >= spell.GetManaCost() && spell.IsReady())
+    {
+        Modifiers modifiersContext = new();
+        if (mana >= CurrentSpell.GetManaCost() && CurrentSpell.IsReady())
         {
-            mana -= spell.GetManaCost();
-            yield return spell.Cast(where, target, team);
+            mana -= CurrentSpell.GetManaCost();
+            yield return CurrentSpell.Cast(where, target, team, modifiersContext);
         }
         yield break;
     }

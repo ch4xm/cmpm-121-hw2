@@ -225,7 +225,7 @@ public class Spell
         return (last_cast + GetCooldown() < Time.time);
     }
 
-    public virtual IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team)
+    public virtual IEnumerator Cast(Vector3 where, Vector3 target, Hittable.Team team, Modifiers modifiersContext)
     {
         this.team = team;
 

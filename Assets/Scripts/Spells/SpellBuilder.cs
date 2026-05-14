@@ -38,13 +38,14 @@ public class SpellBuilder
                 spell = CreateModifierSpell(modifierKey, spell);
             }
         }
-        return spell
+        return spell;
         //Spell spell = new Spell(owner, spells["arcane_bolt"], selectedModifiers) ; // Defaults to bolt for now, need to make this work with UI
     }
 
-    public Spell BuildRandomSpell()
-    {
-    }
+    //public Spell BuildRandomSpell()
+    //{
+
+    //}
 
     private Spell CreateBaseSpell(string key)
     {
@@ -66,22 +67,28 @@ public class SpellBuilder
 
         switch (key)
         {
-            case "damage_amp":
-                return new DamageAmplifier(innerSpell, modifierData);
-            case "damage_amp":
-            case "damage_amp":
-            case "damage_amp":
-            case "damage_amp":
-            default:
 
+            case "doubler":
+                return new StatAmplifier(innerSpell, modifierData);
+
+            case "splitter":
+                return new StatAmplifier(innerSpell, modifierData);
+
+            case "chaos":
+                return new StatAmplifier(innerSpell, modifierData);
+
+            case "homing":
+                return new StatAmplifier(innerSpell, modifierData);
+
+
+            case "damage_amp":
+            case "speed_amp":
+            default: // default to basic modifierspell with no custom behavior
+                return new StatAmplifier(innerSpell, modifierData);
+                //throw new Exception($"Unimplemented modifier with key {key}");
         }
     }
 
-    public Spell CreateModifierSpell()
-    {
-
-    }
-   
     public SpellBuilder(SpellCaster owner)
     {
         SpellReadResult result = ReadSpells();
@@ -118,8 +125,6 @@ public class ModifierData
     public string? delay;
     public string? projectile_trajectory;
     public string? mana_adder;
-
-    public static Apply()
 }
 
 public class DamageData

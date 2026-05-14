@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-class ValueModifier // Each line in a modifier spell corresponds to one of these, eg "damage_multiplier": "1.5"
+public class ValueModifier // Each line in a modifier spell corresponds to one of these, eg "damage_multiplier": "1.5"
 {
     public enum ModifierType
     {
