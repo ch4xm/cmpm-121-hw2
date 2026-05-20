@@ -5593,7 +5593,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthui: {fileID: 765025204}
   manaui: {fileID: 71109453}
-  spellui: {fileID: 2085212185}
+  spellUI: {fileID: 1982188287}
   speed: 5
   unit: {fileID: 0}
 --- !u!4 &1718273953

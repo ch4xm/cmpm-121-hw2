@@ -4,15 +4,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 using Unity.Mathematics;
-using UnityEngine;
 using static DataLoader;
 using Random = UnityEngine.Random;
-using NUnit.Framework;
-
 
 public class SpellBuilder
 {
