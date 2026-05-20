@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     public ManaBar manaui;
 
     public SpellCaster spellcaster;
-    public SpellUI spellui;
+    public SpellUIContainer spellUI;
 
     public int speed;
 
@@ -27,7 +27,11 @@ public class PlayerController : MonoBehaviour
 
     public void StartLevel()
     {
+        Debug.Log(spellUI);
+
         spellcaster = new SpellCaster(125, 8, Hittable.Team.PLAYER);
+        spellUI.RefreshUI();
+
         StartCoroutine(spellcaster.ManaRegeneration());
         
         hp = new Hittable(100, Hittable.Team.PLAYER, gameObject, this);
@@ -37,13 +41,18 @@ public class PlayerController : MonoBehaviour
         // tell UI elements what to show
         healthui.SetHealth(hp);
         manaui.SetSpellCaster(spellcaster);
-        spellui.SetSpell(spellcaster.CurrentSpell);
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (spellcaster is not null)
+        {
+            if (Keyboard.current.digit1Key.wasPressedThisFrame) spellcaster.SelectSpell(0);
+            if (Keyboard.current.digit2Key.wasPressedThisFrame) spellcaster.SelectSpell(1);
+            if (Keyboard.current.digit3Key.wasPressedThisFrame) spellcaster.SelectSpell(2);
+            if (Keyboard.current.digit4Key.wasPressedThisFrame) spellcaster.SelectSpell(3);
+        }
     }
 
     void OnAttack(InputValue value)

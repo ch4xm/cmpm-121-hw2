@@ -17,6 +17,7 @@ public class SpellUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        highlight.SetActive(false);
         last_text_update = 0;
     }
 
@@ -24,6 +25,8 @@ public class SpellUI : MonoBehaviour
     {
         this.spell = spell;
         GameManager.Instance.spellIconManager.PlaceSprite(spell.GetIcon(), icon.GetComponent<Image>());
+
+        this.gameObject.SetActive(true);
     }
 
     // Update is called once per frame

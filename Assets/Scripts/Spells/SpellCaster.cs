@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class SpellCaster 
 {
@@ -14,11 +15,18 @@ public class SpellCaster
 
     private SpellBuilder builder;
 
-    public List<Spell> spells = new ();
+    private readonly List<Spell> spells;
 
-    public int selectedSpellIndex = 0;
+    public List<Spell> Spells => spells;
+
+    private int selectedSpellIndex = 0;
     public Spell CurrentSpell =>
         spells[selectedSpellIndex];
+
+    public int CurrentSpellIndex => selectedSpellIndex;
+
+
+    public SpellUIContainer spellUI;
 
     public IEnumerator ManaRegeneration()
     {
@@ -34,18 +42,70 @@ public class SpellCaster
     {
         this.builder = new SpellBuilder(this);
 
+        spellUI = GameManager.Instance.player.GetComponent<PlayerController>().spellUI;
+
         this.mana = mana;
         this.max_mana = mana;
         this.mana_reg = mana_reg;
         this.team = team;
         this.spell_power = 0;
 
-        //var testModifiers = new List<string> { "triple_splitter", "speed_amp", "damage_amp" };
-        //var spell2 = builder.Build("arcane_bolt", testModifiers);
-        var spell = builder.BuildRandomSpell();
+        this.spells = Enumerable.Repeat<Spell>(null, spellUI.spellSlots.Count()).ToList();
 
-        spells.Add(spell);  // Add default spell
-        //spells.Add(spell2);
+        var spell = builder.Build("arcane_bolt");
+
+        var spell2 = builder.BuildRandomSpell();
+        var spell3 = builder.BuildRandomSpell();
+        var spell4 = builder.BuildRandomSpell();
+
+        SetSpell(0, spell);
+        SetSpell(1, spell2);
+        SetSpell(2, spell3);
+        SetSpell(3, spell4);
+
+        // Add default spell
+    }
+
+    //private void RefreshSpellUI()
+    //{
+    //    for (int i = 0; i < SpellUI.Count; i++)
+    //    {
+    //        if (i < spellcaster.equippedSpells.Count)
+    //        {
+    //            spellui[i].SetSpell(spellcaster.equippedSpells[i]);
+    //        }
+    //        else
+    //        {
+    //            spellui[i].SetSpell(null);  // Spell doesn't exist
+    //        }
+
+    //        spellui[i].gameObject.SetActive(true);
+    //        spellui[i].highlight.SetActive(true);
+    //        //spellui[i].highlight.SetActive(i == spellcaster.selectedSpellIndex);
+    //    }
+    //}
+
+    public void SelectSpell(int index)
+    {
+        if (index < 0 || index >= spells.Count || spells[index] is null)
+            return;
+
+        selectedSpellIndex = index;
+
+        if (spellUI.player.spellcaster is not null)
+            spellUI.RefreshUI();
+    }
+
+
+    public void SetSpell(int index, Spell spell)
+    {
+        if (index < 0 || index >= spells.Count)
+            return;
+
+        spells[index] = spell;
+
+        if (spellUI.player.spellcaster is not null)
+            spellUI.RefreshUI();
     }
 
     public IEnumerator Cast(Vector3 where, Vector3 target)
