@@ -137,6 +137,7 @@ public class EnemySpawner : MonoBehaviour
     {
         GameManager.Instance.currentWave++;
 
+        EventBus.Instance.WaveEnd(GameManager.Instance.currentWave);
         StartCoroutine(SpawnWave());
     }
 

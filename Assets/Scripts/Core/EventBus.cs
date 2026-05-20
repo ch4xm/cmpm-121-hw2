@@ -21,4 +21,10 @@ public class EventBus
         OnDamage?.Invoke(where, dmg, target);
     }
 
+    public event Action<int> OnWaveEnd;
+
+    public void WaveEnd(int newWave)
+    {
+        OnWaveEnd?.Invoke(newWave);
+    }
 }
