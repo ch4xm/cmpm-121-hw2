@@ -1,18 +1,19 @@
 using UnityEngine;
 using System.Collections;
 using System.Dynamic;
+using System;
 
 public abstract class Trigger
 {
     public string description;
     
-    public Action event;
+    public Action Event;
 }
 
-public class takeDamage : Trigger
+public class TakeDamage : Trigger
 {
-    public void tigger(Vector3 where, Damage dmg, Hittable target)
+    public void Trigger(Vector3 where, Damage dmg, Hittable target)
     {
-        EventBus.Instance.DoDamage(where, dmg, target) += event; 
+        //EventBus.Instance.DoDamage(where, dmg, target) += Event; 
     }
 }
