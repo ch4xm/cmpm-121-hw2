@@ -30,8 +30,16 @@ public class EventBus
     
     public event Action<int> OnWaveEnd;
 
-    public void WaveEnd(int newWave)
+    public void WaveEnd(int currentWave)
     {
-        OnWaveEnd?.Invoke(newWave);
+        OnWaveEnd?.Invoke(currentWave);
     }
+
+    public event Action OnNextWave;
+
+    public void NextWave()
+    {
+        OnNextWave?.Invoke();
+    }
+
 }

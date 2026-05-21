@@ -58,9 +58,9 @@ public class EnemySpawner : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // deserialize here into enemyTemplates and levels
+        EventBus.Instance.OnNextWave += NextWave;
 
-        
+        // deserialize here into enemyTemplates and levels
         LevelSelectMenu();
     }
 
@@ -136,8 +136,6 @@ public class EnemySpawner : MonoBehaviour
     public void NextWave()
     {
         GameManager.Instance.currentWave++;
-
-        EventBus.Instance.WaveEnd(GameManager.Instance.currentWave);
         StartCoroutine(SpawnWave());
     }
 
@@ -170,7 +168,11 @@ public class EnemySpawner : MonoBehaviour
         yield return new WaitWhile(() => GameManager.Instance.enemy_count > 0);
 
         GameManager.Instance.state = GameManager.GameState.WAVEEND;
+
         GameManager.Instance.waveEndTime = Time.time;
+
+        EventBus.Instance.WaveEnd(GameManager.Instance.currentWave);
+
         if (GameManager.Instance.currentLevel.waves.HasValue && GameManager.Instance.currentWave >= GameManager.Instance.currentLevel.waves.Value)
         {
             GameManager.Instance.state = GameManager.GameState.GAMEOVER;

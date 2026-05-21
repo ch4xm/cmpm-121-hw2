@@ -93,8 +93,8 @@
       "mana_multiplier": "2"
    },
   "add_mana": {
-    "name:": "add_mana",
-    "description": "reducing the sum total mana cost.",
-    "mana_adder": "-20"
+    "name": "add_mana",
+    "description": "Reduces the mana cost of a spell.",
+    "mana_multiplier": "0.7"
   }
 }
