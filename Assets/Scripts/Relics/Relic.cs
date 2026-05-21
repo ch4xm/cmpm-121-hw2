@@ -6,15 +6,20 @@ public class Relic
 {
     public string name;
     public string description;
-    public Sprite sprite;
-
-    public Trigger trigger;
-
-    public Relic(string name, string description, Sprite sprite, Trigger trigger)
+    public string sprite;
+    
+    public Relic(string name, string description, string sprite)
     {
+        Debug.Log("Creating Relic");
+        
         this.name = name;
         this.description = description;
         this.sprite = sprite;
-        this.trigger = trigger;
+
+        var relicTrigger = new TakeDamage();
+        var relicEffect = new GainMana();
+        relicEffect.amount = "20";
+        
+        relicTrigger.create(relicEffect);
     }
 }

@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
 
     public Unit unit;
 
+    public float lastMove;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -52,6 +53,15 @@ public class PlayerController : MonoBehaviour
             if (Keyboard.current.digit2Key.wasPressedThisFrame) spellcaster.SelectSpell(1);
             if (Keyboard.current.digit3Key.wasPressedThisFrame) spellcaster.SelectSpell(2);
             if (Keyboard.current.digit4Key.wasPressedThisFrame) spellcaster.SelectSpell(3);
+        }
+
+        if (unit.movement == Vector2.zero)
+        {
+            EventBus.Instance.DoStandStill(Time.time - lastMove);
+        }
+        else
+        {
+            lastMove = Time.time;
         }
     }
 
