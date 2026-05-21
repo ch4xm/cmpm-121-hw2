@@ -13,7 +13,7 @@ public class SpellCaster
 
     public Hittable.Team team;
 
-    private SpellBuilder builder;
+    public SpellBuilder builder;
 
     private readonly List<Spell> spells;
 
@@ -53,15 +53,15 @@ public class SpellCaster
         this.spells = Enumerable.Repeat<Spell>(null, spellUI.spellSlots.Count()).ToList();
 
         var spell = builder.Build("arcane_bolt");
-
-        var spell2 = builder.BuildRandomSpell();
-        var spell3 = builder.BuildRandomSpell();
-        var spell4 = builder.BuildRandomSpell();
-
         SetSpell(0, spell);
-        SetSpell(1, spell2);
-        SetSpell(2, spell3);
-        SetSpell(3, spell4);
+
+        //var spell2 = builder.BuildRandomSpell();
+        //var spell3 = builder.BuildRandomSpell();
+        //var spell4 = builder.BuildRandomSpell();
+
+        //SetSpell(1, spell2);
+        //SetSpell(2, spell3);
+        //SetSpell(3, spell4);
 
         // Add default spell
     }
@@ -92,10 +92,33 @@ public class SpellCaster
 
         selectedSpellIndex = index;
 
-        if (spellUI.player.spellcaster is not null)
             spellUI.RefreshUI();
     }
 
+    public void SetFirstAvailableSpell(Spell spell) // Find first open slot, otherwise if no open slots override first spell to new spell
+    {
+        for (int i = 0; i < spells.Count; i++)
+        {
+            if (spells[i] is null)
+            {
+                spells[i] = spell;
+                    spellUI.RefreshUI();
+                return;
+            }
+        }
+        spells[0] = spell;
+        spellUI.RefreshUI();
+
+    }
+
+    public void DropSpell(int index)
+    {
+        if (index < 0 || index >= spells.Count)
+            return;
+
+        spells[index] = null;
+        spellUI.RefreshUI();
+    }
 
     public void SetSpell(int index, Spell spell)
     {
@@ -103,9 +126,7 @@ public class SpellCaster
             return;
 
         spells[index] = spell;
-
-        if (spellUI.player.spellcaster is not null)
-            spellUI.RefreshUI();
+        spellUI.RefreshUI();
     }
 
     public IEnumerator Cast(Vector3 where, Vector3 target)

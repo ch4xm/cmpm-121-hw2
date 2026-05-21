@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor.AdaptivePerformance.Editor;
 using UnityEngine;
@@ -164,6 +165,26 @@ public class Spell
     public string GetName()
     {
         return name;
+    }
+
+    public string GetFullName()
+    {
+        string modName = "";
+        foreach (var mod in modifiers)
+        {
+            modName += mod.name.FirstCharacterToUpper() + " ";
+        }
+        return modName + name;
+    }
+
+    public string GetModifiersDescription()
+    {
+        string modDescription = "";
+        foreach (var mod in modifiers)
+        {
+            modDescription += mod.name.FirstCharacterToUpper() + ": " + mod.description + "\n";
+        }
+        return modDescription;
     }
 
     public string GetDescription()

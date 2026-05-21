@@ -21,6 +21,10 @@ public class SpellUIContainer : MonoBehaviour
 
     public void RefreshUI()
     {
+        if (player.spellcaster is null)
+        {
+            return;
+        }
         for (int i = 0; i < spellSlots.Length; i++)
         {
             Spell spell = player.spellcaster.Spells[i];
