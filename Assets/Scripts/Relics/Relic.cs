@@ -1,21 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Dynamic;
 
-namespace Assets.Scripts.Relics
+public class Relic
 {
-	public class Relic: MonoBehaviour
-	{
+    public string name;
+    public string description;
+    public Sprite sprite;
 
-		// Use this for initialization
-		void Start()
-		{
+    public Trigger trigger;
 
-		}
-
-		// Update is called once per frame
-		void Update()
-		{
-
-		}
-	}
+    public Relic(string name, string description, Sprite sprite, Trigger trigger)
+    {
+        this.name = name;
+        this.description = description;
+        this.sprite = sprite;
+        this.trigger = trigger;
+    }
 }
