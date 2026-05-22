@@ -71,7 +71,10 @@ public class DataLoader
 
         foreach (var relic in result)
         {
-            Debug.Log("Relic: " + relic.name + "\t" + "Trigger: " + relic.trigger.type + "\t" + " type:  " + relic.trigger.GetType().Name);
+            Debug.Log("Relic: " + relic.name);
+            Debug.Log("Trigger: " + relic.trigger.type + " " + " type:  " + relic.trigger.GetType().Name);
+            Debug.Log("Effect: " + relic.effect.type + " " + " type:  " + relic.effect.GetType().Name);
+            Debug.Log("-----");
         }
         
         var relicDict = result.ToDictionary(x => x.name, x => x);

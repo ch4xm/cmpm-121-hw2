@@ -9,7 +9,10 @@ public abstract class RelicTrigger
     public string description;
     public string type;
     public string? amount;
-    
+
+    public RelicTrigger() {
+    }
+
     public abstract void Create(RelicEffect effect);
 }
 
