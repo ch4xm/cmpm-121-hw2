@@ -7,12 +7,11 @@ public class Relic
 {
     public string name;
     public string sprite;
-    
     public RelicTrigger trigger;
     public RelicEffect effect;
 
-    [CanBeNull] public RelicTrigger endTrigger;
-    [CanBeNull] public RelicEffect endEffect;
+    public RelicTrigger? endTrigger;
+    public RelicEffect? endEffect;
     
     public Relic()
     {

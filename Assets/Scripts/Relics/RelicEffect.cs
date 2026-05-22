@@ -9,15 +9,15 @@ public abstract class RelicEffect
 {
     public string description;
     public string type;
-    [CanBeNull] public string amount;
-    [CanBeNull] public string until;
+    public string? amount;
+    public string? until;
     
-    public abstract void effect(Hittable player);
+    public abstract void Apply(Hittable player);
 }
 
 public class GainManaEffect : RelicEffect
 {
-    public override void effect(Hittable player)
+    public override void Apply(Hittable player)
     {
         var spellcaster = player.parent.GetComponent<PlayerController>().spellcaster;
         spellcaster.mana += RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
