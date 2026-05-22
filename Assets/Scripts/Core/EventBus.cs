@@ -35,12 +35,20 @@ public class EventBus
         OnMove?.Invoke(time, target);
     }
     
+    public event Action<float, Hittable, Hittable> OnKill;
+    
+    public void DoKill(float time, Hittable source, Hittable target)
+    {
+        OnKill?.Invoke(time, source, target);
+    }
+    
     public event Action<int> OnWaveEnd;
 
     public void WaveEnd(int currentWave)
     {
         OnWaveEnd?.Invoke(currentWave);
     }
+
 
     public event Action OnNextWave;
 

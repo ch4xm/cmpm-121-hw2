@@ -55,3 +55,15 @@ public class MoveTrigger: RelicTrigger
         };
     }
 }
+
+public class KillTrigger: RelicTrigger
+{
+    public override void Create(RelicEffect effect)
+    {
+        EventBus.Instance.OnKill += (time, source, target) =>
+        {
+            Debug.Log("Trigger onkill");
+            effect.Apply(source);
+        };
+    }
+}

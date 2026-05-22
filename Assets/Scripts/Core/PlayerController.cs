@@ -21,10 +21,15 @@ public class PlayerController : MonoBehaviour
     public float lastMove;
     public float lastStand;
     
+    public Dictionary<string, Relic> relics;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         unit = GetComponent<Unit>();
+        relics = DataLoader.ReadRelics();
+        relics["Green Gem"].Activate();
+        
         GameManager.Instance.player = gameObject;
     }
 

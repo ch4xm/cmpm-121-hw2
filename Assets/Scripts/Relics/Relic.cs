@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Dynamic;
 using JetBrains.Annotations;
+using UnityEngine.WSA;
 
 public class Relic
 {
@@ -20,12 +21,13 @@ public class Relic
     public RelicTrigger? endTrigger;
     public RelicEffect? endEffect;
 
-    public Relic()
+    public void Activate()
     {
-        Debug.Log("Creating Relic: " + this.name);
+        Debug.Log("Activating Relic: "  + name);
+        Debug.Log(trigger.description + " " + effect.description);
+        trigger.Create(effect);
     }
 }
-
 
 class TriggerConverter : JsonConverter<RelicTrigger>
 {
@@ -44,6 +46,7 @@ class TriggerConverter : JsonConverter<RelicTrigger>
         {
             "take-damage" => new TakeDamageTrigger(),
             "stand-still" => new StandStillTrigger(),
+            "on-kill" => new KillTrigger(),
             _ => throw new Exception("Unknown type")
         };
 

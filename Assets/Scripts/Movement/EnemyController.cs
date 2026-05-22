@@ -21,6 +21,7 @@ public class EnemyController : MonoBehaviour
     {
         target = GameManager.Instance.player.transform;
         hp.OnDeath += Die;
+        hp.OnDeath += () => EventBus.Instance.DoKill(Time.time, GameManager.Instance.player.GetComponent<PlayerController>().hp, hp);
         healthui.SetHealth(hp);
 
         unit = GetComponent<Unit>();
