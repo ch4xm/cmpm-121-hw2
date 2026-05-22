@@ -3,38 +3,55 @@ using System.Collections;
 using System.Dynamic;
 using JetBrains.Annotations;
 
-public class RelicTriggerData
-{
-    public string discription;
-    public string type;
-    [CanBeNull] public string amount;
-}
-
-public class RelicEffectData
-{
-    public string discription;
-    public string type;
-    [CanBeNull] public string amount;
-    [CanBeNull] public string until;
-}
-
 public class Relic
 {
     public string name;
     public string sprite;
     
-    public RelicTriggerData relicTriggerData;
-    public RelicEffectData relicEffectData;
+    public RelicTrigger trigger;
+    public RelicEffect effect;
+
+    [CanBeNull] public RelicTrigger endTrigger;
+    [CanBeNull] public RelicEffect endEffect;
     
     public Relic()
     {
-        Debug.Log("Creating Relic");
+        Debug.Log("Creating Relic: " + this.name);
         
-        var relicTrigger = new StandStill();
-        var relicEffect = new GainMana();
-        relicTrigger.amount = "1";
-        relicEffect.amount = "20";
+        switch (trigger.type)
+        {
+            case "take-damage":
+                trigger = new TakeDamageTrigger();
+                break;
+            case "stand-still":
+                trigger = new StandStillTrigger();
+                break;
+            case "move":
+                trigger = new MoveTrigger();
+                break;
+            default:
+                Debug.Log("Unknown trigger type: " + trigger.type);
+                break;
+        }
+
+        switch (effect.type)
+        {
+            case "gain-mana":
+                effect = new GainManaEffect();
+                break;
+            default:
+                Debug.Log("Unknown effect type: " + effect.type);
+                break;
+        }
+        /*
+        trigger = new StandStillTrigger();
+        effect = new GainManaEffect();
+        trigger.amount = "1";
+        effect.amount = "20";
         
-        relicTrigger.create(relicEffect);
+        trigger.create(effect);
+        */
     }
 }
+
+

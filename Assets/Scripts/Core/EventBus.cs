@@ -28,6 +28,13 @@ public class EventBus
         OnStandStill?.Invoke(time, target);
     }
     
+    public event Action<float, Hittable> OnMove;
+
+    public void DoMove(float time, Hittable target)
+    {
+        OnMove?.Invoke(time, target);
+    }
+    
     public event Action<int> OnWaveEnd;
 
     public void WaveEnd(int currentWave)

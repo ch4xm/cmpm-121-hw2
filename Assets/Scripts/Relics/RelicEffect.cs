@@ -8,13 +8,14 @@ using Unity.VisualScripting;
 public abstract class RelicEffect
 {
     public string description;
+    public string type;
     [CanBeNull] public string amount;
     [CanBeNull] public string until;
     
     public abstract void effect(Hittable player);
 }
 
-public class GainMana : RelicEffect
+public class GainManaEffect : RelicEffect
 {
     public override void effect(Hittable player)
     {

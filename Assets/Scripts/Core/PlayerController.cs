@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
     public Unit unit;
 
     public float lastMove;
+    public float lastStand;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -58,9 +60,11 @@ public class PlayerController : MonoBehaviour
         if (unit.movement == Vector2.zero)
         {
             EventBus.Instance.DoStandStill(Time.time - lastMove, hp);
+            lastStand = Time.time;
         }
         else
         {
+            EventBus.Instance.DoMove(Time.time - lastStand, hp);
             lastMove = Time.time;
         }
     }
