@@ -59,4 +59,15 @@ public class DataLoader
 
         return result;
     }
+
+    public static Dictionary<string, Relic> ReadRelics()
+    {
+        // read and deserialize enemies.json
+        string json = File.ReadAllText("Assets/Resources/relics.json");
+
+        var result = JsonConvert.DeserializeObject<List<Relic>>(json);
+        var relicDict = result.ToDictionary(x => x.name, x => x);
+
+        return relicDict;
+    }
 }

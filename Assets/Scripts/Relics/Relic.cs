@@ -1,21 +1,35 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Dynamic;
+using JetBrains.Annotations;
+
+public class RelicTriggerData
+{
+    public string discription;
+    public string type;
+    [CanBeNull] public string amount;
+}
+
+public class RelicEffectData
+{
+    public string discription;
+    public string type;
+    [CanBeNull] public string amount;
+    [CanBeNull] public string until;
+}
 
 public class Relic
 {
     public string name;
-    public string description;
     public string sprite;
     
-    public Relic(string name, string description, string sprite)
+    public RelicTriggerData relicTriggerData;
+    public RelicEffectData relicEffectData;
+    
+    public Relic()
     {
         Debug.Log("Creating Relic");
         
-        this.name = name;
-        this.description = description;
-        this.sprite = sprite;
-
         var relicTrigger = new TakeDamage();
         var relicEffect = new GainMana();
         relicEffect.amount = "20";

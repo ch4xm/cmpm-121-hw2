@@ -72,7 +72,7 @@ public class GameManager
         Instance.currentWave = 1;
         Instance.currentLevel = levels.Find(x => x.name == levelName);
 
-        var relic = new Relic("", "", "");
+        var relic = new Relic();
     }
     
     public GameObject GetClosestEnemy(Vector3 point)
