@@ -21,6 +21,11 @@ public class RelicUI : MonoBehaviour
         */
     }
 
+    public void SetRelic(int relic)
+    {
+        GameManager.Instance.relicIconManager.PlaceSprite(relic, icon);
+    }
+
     // Update is called once per frame
     void Update()
     {

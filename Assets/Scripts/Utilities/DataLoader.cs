@@ -65,7 +65,7 @@ public class DataLoader
     public static Dictionary<string, Relic> ReadRelics()
     {
         // read and deserialize enemies.json
-        string json = File.ReadAllText("Assets/Resources/relicsTest.json");
+        string json = File.ReadAllText("Assets/Resources/relics.json");
         
         var result = JsonConvert.DeserializeObject<List<Relic>>(json);
 

@@ -57,4 +57,10 @@ public class EventBus
         OnNextWave?.Invoke();
     }
 
+    public event Action<Relic> OnRelicPickup;
+    public void RelicPickup(Relic relic)
+    {
+        OnRelicPickup?.Invoke(relic);
+    }
+
 }

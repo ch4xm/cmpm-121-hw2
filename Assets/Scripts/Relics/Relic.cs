@@ -11,7 +11,7 @@ using UnityEngine.WSA;
 public class Relic
 {
     public string name;
-    public string sprite;
+    public int sprite;
 
     [JsonConverter(typeof(TriggerConverter))]
     public RelicTrigger trigger;

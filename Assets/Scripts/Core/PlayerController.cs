@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     public SpellCaster spellcaster;
     public SpellUIContainer spellUI;
 
+    public List<Relic> relics;
+
     public int speed;
 
     public Unit unit;
@@ -21,14 +23,14 @@ public class PlayerController : MonoBehaviour
     public float lastMove;
     public float lastStand;
     
-    public Dictionary<string, Relic> relics;
+    public Dictionary<string, Relic> relicTypes;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         unit = GetComponent<Unit>();
-        relics = DataLoader.ReadRelics();
-        relics["Green Gem"].Activate();
+        relicTypes = DataLoader.ReadRelics();
+        relicTypes["Green Gem"].Activate();
         
         GameManager.Instance.player = gameObject;
     }
