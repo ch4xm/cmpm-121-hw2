@@ -18,8 +18,9 @@ public class GainMana : RelicEffect
 {
     public override void effect(Hittable player)
     {
-        player.parent.GetComponent<PlayerController>().spellcaster.mana +=
-            RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        var spellcaster = player.parent.GetComponent<PlayerController>().spellcaster;
+        spellcaster.mana += RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        spellcaster.mana =  Mathf.Clamp(spellcaster.mana, 0, spellcaster.max_mana);
         Debug.Log("Added mana");
     }
 }

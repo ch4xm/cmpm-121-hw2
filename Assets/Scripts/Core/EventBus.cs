@@ -21,11 +21,11 @@ public class EventBus
         OnDamage?.Invoke(where, dmg, target);
     }
 
-    public event Action<float> OnStandStill;
+    public event Action<float, Hittable> OnStandStill;
 
-    public void DoStandStill(float time)
+    public void DoStandStill(float time, Hittable target)
     {
-        OnStandStill?.Invoke(time);
+        OnStandStill?.Invoke(time, target);
     }
     
     public event Action<int> OnWaveEnd;

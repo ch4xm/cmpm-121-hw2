@@ -30,8 +30,9 @@ public class Relic
     {
         Debug.Log("Creating Relic");
         
-        var relicTrigger = new TakeDamage();
+        var relicTrigger = new StandStill();
         var relicEffect = new GainMana();
+        relicTrigger.amount = "1";
         relicEffect.amount = "20";
         
         relicTrigger.create(relicEffect);

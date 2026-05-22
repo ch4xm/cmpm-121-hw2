@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
 
         if (unit.movement == Vector2.zero)
         {
-            EventBus.Instance.DoStandStill(Time.time - lastMove);
+            EventBus.Instance.DoStandStill(Time.time - lastMove, hp);
         }
         else
         {
