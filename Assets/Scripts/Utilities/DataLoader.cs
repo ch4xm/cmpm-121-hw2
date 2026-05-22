@@ -89,7 +89,13 @@ public class DataLoader
         // read and deserialize classes.json
         string json = File.ReadAllText("Assets/Resources/classes.json");
 
-        var result = JsonConvert.DeserializeObject<Dictionary<string, PlayerClass>>(json);
+        var temp = JsonConvert.DeserializeObject<Dictionary<string, PlayerClass>>(json);
+
+        var result = new Dictionary<string, PlayerClass>(temp);
+        foreach (var key in temp.Keys.ToList())
+        {
+            result[key].name = key;
+        }
 
         return result;
     }

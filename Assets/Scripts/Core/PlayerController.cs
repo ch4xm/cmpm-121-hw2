@@ -5,7 +5,6 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static PlayerController;
 
 public class PlayerController : MonoBehaviour
 {
@@ -151,6 +150,7 @@ public class PlayerController : MonoBehaviour
 
     public class PlayerClass
     {
+        public string name;
         public int sprite;
         public string health;
         public string mana;
