@@ -86,6 +86,7 @@ public class GameManager
     {
         levels = DataLoader.ReadLevels();
         enemyTypes = DataLoader.ReadEnemies();
+        DataLoader.ReadRelics();
 
         enemies = new List<GameObject>();
     }

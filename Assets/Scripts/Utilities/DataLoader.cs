@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
+using Object = System.Object;
+
 public class DataLoader
 {
     public static List<Level> ReadLevels()
@@ -63,11 +65,18 @@ public class DataLoader
     public static Dictionary<string, Relic> ReadRelics()
     {
         // read and deserialize enemies.json
-        string json = File.ReadAllText("Assets/Resources/relics.json");
-
+        string json = File.ReadAllText("Assets/Resources/relicsTest.json");
+        
         var result = JsonConvert.DeserializeObject<List<Relic>>(json);
-        var relicDict = result.ToDictionary(x => x.name, x => x);
 
+        foreach (var relic in result)
+        {
+            Debug.Log("Relic: " + relic.name + "\t" + "Trigger: " + relic.trigger.type + "\t" + " type:  " + relic.trigger.GetType().Name);
+        }
+        
+        var relicDict = result.ToDictionary(x => x.name, x => x);
+        
+        
         return relicDict;
     }
 }
