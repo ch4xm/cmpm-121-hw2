@@ -47,53 +47,53 @@
        "mana_multiplier": "1.5"
    },
    "speed_amp": {
-       "name": "speed-amplified",
+       "name": "Speed Amplified",
        "description": "Faster projectile speed",
        "speed_multiplier": "1.75"
    },
    "doubler": {
-       "name": "doubled",
+       "name": "Doubled",
        "description": "Spell is cast a second time after a small delay; increased mana cost and cooldown.",
        "delay": "0.5",
        "mana_multiplier": "1.5",
        "cooldown_multiplier": "1.5"
    },
    "splitter": {
-       "name": "split",
+       "name": "Splitting",
        "description": "Spell is cast twice in slightly different directions; increased mana cost.",
        "angle": "10",
      "multishot": "2",
        "mana_multiplier": "1.5"
    },
    "chaos": {
-       "name": "chaotic",
+       "name": "Chaotic",
        "description": "Significantly increased damage, but projectile is spiraling.",
        "damage_multiplier": "1.5 wave 5 / +",
        "projectile_trajectory": "spiraling"
    },
    "homing": {
-       "name": "homing",
+       "name": "Homing",
        "description": "Homing projectile, with decreased damage and increased mana cost.",
        "damage_multiplier": "0.75",
        "mana_adder": "10",
        "projectile_trajectory": "homing"
    },
    "stun": {
-	   "name": "stun",
+	   "name": "Stunning",
 	   "description": "A ice cold spell that freezes your enemies for a bit, but deals lower damage.",
        "damage_multiplier": "0.5",
        "mana_multiplier": "1.25",
 	   "time": "1"
    },
   "triple_splitter": {
-      "name": "triple-split",
+      "name": "Triple Split",
       "description": "Spell is cast three times in slightly different directions; increased mana cost.",
       "angle": "10",
       "multishot": "3",
       "mana_multiplier": "2"
    },
   "add_mana": {
-    "name": "add_mana",
+    "name": "Mana Reduced",
     "description": "Reduces the mana cost of a spell.",
     "mana_multiplier": "0.7"
   }

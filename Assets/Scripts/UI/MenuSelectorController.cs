@@ -25,14 +25,20 @@ public class MenuSelectorController : MonoBehaviour
         label.text = text;
     }
 
+    public void SelectDifficulty()
+    {
+        
+    }
+
     public void StartLevel()
     {
-        if (level == "New Game") spawner.LevelSelectMenu();
-        else
-        {
-            spawner.level_selector.gameObject.SetActive(false);
-            spawner.StartLevel(level);
-        }
+        EventBus.Instance.LevelSelected(level);
+        //if (level == "New Game") spawner.LevelSelectMenu();
+        //else
+        //{
+        //    spawner.level_selector.gameObject.SetActive(false);
+        //    spawner.StartLevel(level);
+        //}
 
     }
 }

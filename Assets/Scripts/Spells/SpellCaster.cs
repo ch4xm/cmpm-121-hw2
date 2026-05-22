@@ -54,36 +54,8 @@ public class SpellCaster
 
         var spell = builder.Build("arcane_bolt");
         SetSpell(0, spell);
-
-        //var spell2 = builder.BuildRandomSpell();
-        //var spell3 = builder.BuildRandomSpell();
-        //var spell4 = builder.BuildRandomSpell();
-
-        //SetSpell(1, spell2);
-        //SetSpell(2, spell3);
-        //SetSpell(3, spell4);
-
-        // Add default spell
     }
 
-    //private void RefreshSpellUI()
-    //{
-    //    for (int i = 0; i < SpellUI.Count; i++)
-    //    {
-    //        if (i < spellcaster.equippedSpells.Count)
-    //        {
-    //            spellui[i].SetSpell(spellcaster.equippedSpells[i]);
-    //        }
-    //        else
-    //        {
-    //            spellui[i].SetSpell(null);  // Spell doesn't exist
-    //        }
-
-    //        spellui[i].gameObject.SetActive(true);
-    //        spellui[i].highlight.SetActive(true);
-    //        //spellui[i].highlight.SetActive(i == spellcaster.selectedSpellIndex);
-    //    }
-    //}
 
     public void SelectSpell(int index)
     {

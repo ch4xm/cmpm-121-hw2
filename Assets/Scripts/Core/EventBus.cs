@@ -44,23 +44,46 @@ public class EventBus
     
     public event Action<int> OnWaveEnd;
 
-    public void WaveEnd(int currentWave)
+    public void DoWaveEnd(int currentWave)
     {
         OnWaveEnd?.Invoke(currentWave);
     }
 
-
     public event Action OnNextWave;
 
-    public void NextWave()
+    public void DoNextWave()
     {
         OnNextWave?.Invoke();
     }
 
+    public event Action OnHideRewardScreen;
+
+    public void DoHideRewardScreen()
+    {
+        OnHideRewardScreen?.Invoke();
+    }
+
     public event Action<Relic> OnRelicPickup;
-    public void RelicPickup(Relic relic)
+    public void PickupRelic(Relic relic)
     {
         OnRelicPickup?.Invoke(relic);
     }
 
+    public event Action<string> OnLevelSelected;
+    public void LevelSelected(string level)
+    {
+        OnLevelSelected?.Invoke(level);
+    }
+
+    public event Action<string> OnClassSelected;
+    public void ClassSelected(string playerClass)
+    {
+        OnClassSelected?.Invoke(playerClass);
+    }
+
+    public event Action<string, string> OnGameStart;
+    public void StartGame(string levelName, string playerClass)
+    {
+        OnGameStart?.Invoke(levelName, playerClass);
+    }
 }

@@ -2,7 +2,10 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static PlayerController;
+using PlayerClass = PlayerController.PlayerClass;
 
 
 public class GameManager 
@@ -22,6 +25,7 @@ public class GameManager
 
     public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
     public List<Level> levels;
+    public Dictionary<string, PlayerClass> playerClasses;
 
     public Level currentLevel;
     public int currentWave = 1;
@@ -68,13 +72,12 @@ public class GameManager
 
     public void SetupLevel(string levelName)
     {
+        player.GetComponent<PlayerController>().relics.Clear();
         RemoveAllEnemies();
         Instance.currentWave = 1;
         Instance.currentLevel = levels.Find(x => x.name == levelName);
-
-        var relic = new Relic();
     }
-    
+
     public GameObject GetClosestEnemy(Vector3 point)
     {
         if (enemies == null || enemies.Count == 0) return null;
@@ -86,6 +89,8 @@ public class GameManager
     {
         levels = DataLoader.ReadLevels();
         enemyTypes = DataLoader.ReadEnemies();
+        playerClasses = DataLoader.ReadPlayerClasses();
+
         enemies = new List<GameObject>();
     }
 }

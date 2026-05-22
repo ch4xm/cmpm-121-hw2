@@ -7,6 +7,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor.AdaptivePerformance.Editor;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEngine.UI.CanvasScaler;
 
 public class Projectile
@@ -17,13 +18,14 @@ public class Projectile
     public string speed;
     public string? lifetime;
 
-    public Projectile(int sprite, string trajectory, string speed, string? lifetime)
+    public Projectile(ProjectileData data)
     {
-        this.sprite = sprite;
-        this.trajectory = trajectory;
-        this.speed = speed;
-        this.lifetime = lifetime;
+        this.sprite = data.sprite;
+        this.trajectory = data.trajectory;
+        this.speed = data.speed;
+        this.lifetime = data.lifetime;
     }
+
     public float GetSpeed()
     {
         var result = parent.CalculateProperty(speed);
@@ -99,14 +101,18 @@ public class Spell
         N = spell_data.N ?? "1";
         spray = spell_data.spray;
 
-        projectile = spell_data.projectile;
-        projectile.parent = this;
+        projectile = new Projectile(spell_data.projectile)
+        {
+            parent = this
+        };
 
 
         if (spell_data.secondary_projectile != null)
         {
-            secondary_projectile = spell_data.secondary_projectile;
-            secondary_projectile.parent = this;
+            secondary_projectile = new Projectile(spell_data.secondary_projectile)
+            {
+                parent = this
+            };
             has_secondary_projectile = true;
         }
 

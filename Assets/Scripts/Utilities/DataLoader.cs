@@ -7,6 +7,7 @@ using System.Runtime.ExceptionServices;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Object = System.Object;
+using PlayerClass = PlayerController.PlayerClass;
 
 public class DataLoader
 {
@@ -64,7 +65,7 @@ public class DataLoader
 
     public static Dictionary<string, Relic> ReadRelics()
     {
-        // read and deserialize enemies.json
+        // read and deserialize relics.json
         string json = File.ReadAllText("Assets/Resources/relics.json");
         
         var result = JsonConvert.DeserializeObject<List<Relic>>(json);
@@ -81,5 +82,15 @@ public class DataLoader
         
         
         return relicDict;
+    }
+
+    public static Dictionary<string, PlayerClass> ReadPlayerClasses()
+    {
+        // read and deserialize classes.json
+        string json = File.ReadAllText("Assets/Resources/classes.json");
+
+        var result = JsonConvert.DeserializeObject<Dictionary<string, PlayerClass>>(json);
+
+        return result;
     }
 }

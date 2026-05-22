@@ -55,12 +55,14 @@ public class EnemySpawner : MonoBehaviour
 
     private int activeSpawnGroups = 0;
 
+    public string selectedLevel;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        EventBus.Instance.OnGameStart += StartLevel;
         EventBus.Instance.OnNextWave += NextWave;
 
-        // deserialize here into enemyTemplates and levels
         LevelSelectMenu();
     }
 
@@ -120,15 +122,19 @@ public class EnemySpawner : MonoBehaviour
         //}
     }
 
-    public void StartLevel(string levelName)
+    public void StartLevel(string levelName, string playerClass)
     {
+        // TODO: use playerclass string to scale stats
         StopAllCoroutines();
         GameManager.Instance.SetupLevel(levelName);
 
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
         level_selector.gameObject.SetActive(false);
 
-        GameManager.Instance.player.GetComponent<PlayerController>().StartLevel();
+        var player = GameManager.Instance.player.GetComponent<PlayerController>();
+
+        player.SetClass(playerClass);
+        player.StartLevel();
         
         StartCoroutine(SpawnWave());
     }
@@ -171,7 +177,7 @@ public class EnemySpawner : MonoBehaviour
 
         GameManager.Instance.waveEndTime = Time.time;
 
-        EventBus.Instance.WaveEnd(GameManager.Instance.currentWave);
+        EventBus.Instance.DoWaveEnd(GameManager.Instance.currentWave);
 
         if (GameManager.Instance.currentLevel.waves.HasValue && GameManager.Instance.currentWave >= GameManager.Instance.currentLevel.waves.Value)
         {

@@ -23,6 +23,7 @@ public class RelicUIManager : MonoBehaviour
         GameObject rui = Instantiate(relicUIPrefab, transform);
         rui.transform.localPosition = new Vector3(-450 + 40 * (player.relics.Count - 1), 0, 0);
         RelicUI ruic = rui.GetComponent<RelicUI>();
+        ruic.SetRelic(r);
         ruic.player = player;
         ruic.index = player.relics.Count - 1;
         

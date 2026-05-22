@@ -17,7 +17,6 @@ public class SpellUI : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        highlight.SetActive(false);
         last_text_update = 0;
     }
 

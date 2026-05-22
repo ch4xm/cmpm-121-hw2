@@ -122,8 +122,16 @@ public class SpellData
     public string spray;
     public string mana_cost;
     public string cooldown;
-    public Projectile projectile;
-    public Projectile secondary_projectile;
+    public ProjectileData projectile;
+    public ProjectileData secondary_projectile;
+}
+
+public class ProjectileData
+{
+    public int sprite;
+    public string trajectory;
+    public string speed;
+    public string? lifetime;
 }
 
 // Helper classes for parsing modifiers from JSON

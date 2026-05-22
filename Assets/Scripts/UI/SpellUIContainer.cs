@@ -10,7 +10,7 @@ public class SpellUIContainer : MonoBehaviour
     void Start()
     {
         spellSlots = gameObject.GetComponentsInChildren<SpellUI>(true);
-
+        spellSlots[0].highlight.SetActive(true);
         // hide all spells until game starts
         for (int i = 1; i < spellSlots.Length; ++i)
         {

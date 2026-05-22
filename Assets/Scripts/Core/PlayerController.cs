@@ -1,15 +1,19 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.IO;
-using System.Collections.Generic;
+using UnityEngine.UI;
+using static PlayerController;
 
 public class PlayerController : MonoBehaviour
 {
     public Hittable hp;
     public HealthBar healthui;
     public ManaBar manaui;
+
+    private PlayerClass currentClass;
 
     public SpellCaster spellcaster;
     public SpellUIContainer spellUI;
@@ -22,22 +26,45 @@ public class PlayerController : MonoBehaviour
 
     public float lastMove;
     public float lastStand;
-    
+
+    public GameObject sprite;
+
     public Dictionary<string, Relic> relicTypes;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         unit = GetComponent<Unit>();
+
         relicTypes = DataLoader.ReadRelics();
-        relicTypes["Green Gem"].Activate();
+        relics = new List<Relic>();
         
         GameManager.Instance.player = gameObject;
+
+        EventBus.Instance.OnRelicPickup += AddRelic;
+    }
+
+    public void SetClass(string className)
+    {
+        currentClass = GameManager.Instance.playerClasses[className];
+
+        SetIcon(currentClass.sprite);
+    }
+
+    public void SetIcon(int icon)
+    {
+        sprite.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.playerSpriteManager.Get(icon);
+    }
+
+    public void AddRelic(Relic relic)
+    {
+        relic.Activate();
+        relics.Add(relic);
     }
 
     public void StartLevel()
     {
-        Debug.Log(spellUI);
+        relics = new List<Relic>();
 
         spellcaster = new SpellCaster(125, 8, Hittable.Team.PLAYER);
         spellUI.RefreshUI();
@@ -104,12 +131,31 @@ public class PlayerController : MonoBehaviour
 
     public void LevelUp(int wave)
     {
-        Dictionary<string, int> vars = new Dictionary<string, int>();
-        vars["wave"] = wave;
-        hp.SetMaxHP(RPNEvaluator.RPNEvaluator.Evaluate("95 wave 5 * +", vars));
-        spellcaster.max_mana = RPNEvaluator.RPNEvaluator.Evaluate("90 wave 10 * +", vars);
-        spellcaster.mana_reg = RPNEvaluator.RPNEvaluator.Evaluate("10 wave +", vars);
-        spellcaster.spell_power = RPNEvaluator.RPNEvaluator.Evaluate("wave 10 *", vars);
-        speed = 5;
+        Dictionary<string, int> vars = new ()
+        {
+            ["wave"] = wave
+        };
+
+        hp.SetMaxHP(RPNEvaluator.RPNEvaluator.Evaluate(currentClass.health, vars));
+        spellcaster.max_mana = RPNEvaluator.RPNEvaluator.Evaluate(currentClass.mana, vars);
+        spellcaster.mana_reg = RPNEvaluator.RPNEvaluator.Evaluate(currentClass.mana_regeneration, vars);
+        spellcaster.spell_power = RPNEvaluator.RPNEvaluator.Evaluate(currentClass.spellpower, vars);
+        speed = RPNEvaluator.RPNEvaluator.Evaluate(currentClass.speed, vars);
+
+        //hp.SetMaxHP(RPNEvaluator.RPNEvaluator.Evaluate("95 wave 5 * +", vars));
+        //spellcaster.max_mana = RPNEvaluator.RPNEvaluator.Evaluate("90 wave 10 * +", vars);
+        //spellcaster.mana_reg = RPNEvaluator.RPNEvaluator.Evaluate("10 wave +", vars);
+        //spellcaster.spell_power = RPNEvaluator.RPNEvaluator.Evaluate("wave 10 *", vars);
+        //speed = 5;
+    }
+
+    public class PlayerClass
+    {
+        public int sprite;
+        public string health;
+        public string mana;
+        public string mana_regeneration;
+        public string spellpower;
+        public string speed;
     }
 }

@@ -30,6 +30,7 @@ public class RewardScreenManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        rewardUI.SetActive(false);
 
         rewardText = new GameObject("rewardText");
         rewardText.transform.SetParent(rewardUI.transform);
@@ -40,11 +41,6 @@ public class RewardScreenManager : MonoBehaviour
         title.alignment = TextAlignmentOptions.Center;
         title.fontSize = 36;
         title.color = Color.black;
-
-        //stats = rewardText.AddComponent<TextMeshProUGUI>();
-        //stats.alignment = TextAlignmentOptions.Center;
-        //stats.fontSize = 24;
-        //stats.color = Color.black;
 
         EventBus.Instance.OnWaveEnd += ShowRewards;
     }
@@ -139,7 +135,7 @@ public class RewardScreenManager : MonoBehaviour
     {
         rewardUI.SetActive(false);
 
-        EventBus.Instance.NextWave();
+        EventBus.Instance.DoHideRewardScreen();
 
         //GameManager.Instance.state = GameManager.GameState.COUNTDOWN;
     }

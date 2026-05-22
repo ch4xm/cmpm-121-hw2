@@ -15,15 +15,15 @@ public class RelicUI : MonoBehaviour
     void Start()
     {
         // if a player has relics, this is how you *could* show them
-        /*
-        Relic r = player.relics[index];
-        GameManager.Instance.relicIconManager.PlaceSprite(r.sprite, icon);
-        */
+
+        //Relic r = player.relics[index];
+        //GameManager.Instance.relicIconManager.PlaceSprite(r.sprite, icon);
+
     }
 
-    public void SetRelic(int relic)
+    public void SetRelic(Relic relic)
     {
-        GameManager.Instance.relicIconManager.PlaceSprite(relic, icon);
+        GameManager.Instance.relicIconManager.PlaceSprite(relic.sprite, icon);
     }
 
     // Update is called once per frame
