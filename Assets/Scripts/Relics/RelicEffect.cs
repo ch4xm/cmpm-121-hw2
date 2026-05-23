@@ -29,6 +29,8 @@ public abstract class RelicEffect
     {
         if (currentEffectCount <= 0) return;
         currentEffectCount--;
+        
+        RemoveEffect(player);
     }
 
     public virtual void RemoveEffect(Hittable player)
@@ -67,6 +69,21 @@ public class GainSpellPowerEffect : RelicEffect
         var spellcaster = player.parent.GetComponent<PlayerController>().spellcaster;
         spellcaster.spell_power -= RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
         Debug.Log("Removed spell power");
+    }
+}
+
+public class GainMovementSpeedEffect : RelicEffect
+{
+    public override void ApplyEffect(Hittable player)
+    {
+        player.parent.GetComponent<PlayerController>().speed += RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        Debug.Log("Added speed");
+    }
+
+    public override void RemoveEffect(Hittable player)
+    {
+        player.parent.GetComponent<PlayerController>().speed -= RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        Debug.Log("Removed speed");
     }
 }
 

@@ -53,5 +53,19 @@
             "type": "gain-mana",
             "amount": "25"
         }
+    },
+    {
+        "name": "Speed Bracelet",
+        "sprite": 14,
+        "trigger": {
+            "description": "After you kill an enemy",
+            "type": "on-kill"
+        },
+        "effect": {
+            "description": "you gain 5 movement speed until you take damage.",
+            "type": "gain-movement-speed",
+            "amount": "5",
+            "until": "take-damage"
+        }
     }
 ]

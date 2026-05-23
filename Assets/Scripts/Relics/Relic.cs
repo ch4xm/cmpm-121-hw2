@@ -56,6 +56,17 @@ public class Relic
         return trigger;
     }
 
+    public static RelicEffect stringToEffect(string type)
+    {
+        RelicEffect effect = type switch
+        {
+            "gain-mana" => new GainManaEffect(),
+            "gain-spellpower" => new GainSpellPowerEffect(),
+            "gain-movement-speed" => new GainMovementSpeedEffect(),
+            _ => throw new Exception("Unknown type")
+        };
+        return effect;
+    }
 }
 
 class TriggerConverter : JsonConverter<RelicTrigger>
@@ -108,13 +119,17 @@ class EffectConverter : JsonConverter<RelicEffect>
 
         string type = obj["type"]?.ToString();
 
+        /*
         RelicEffect effect = type switch
         {
             "gain-mana" => new GainManaEffect(),
             "gain-spellpower" => new GainSpellPowerEffect(),
             _ => throw new Exception("Unknown type")
         };
-
+        */
+        
+        RelicEffect effect = Relic.stringToEffect(type);
+        
         serializer.Populate(obj.CreateReader(), effect);
 
         return effect;

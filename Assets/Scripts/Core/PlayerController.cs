@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
         
         GameManager.Instance.player = gameObject;
         
-        AddRelic(relicTypes["Golden Mask"]);
+        AddRelic(relicTypes["speed_relic"]);
         // EventBus.Instance.OnRelicPickup += AddRelic;
     }
 
