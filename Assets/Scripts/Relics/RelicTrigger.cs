@@ -13,30 +13,30 @@ public abstract class RelicTrigger
     public RelicTrigger() {
     }
 
-    public abstract void Create(RelicEffect effect);
+    public abstract void Create(Action<Hittable> effect);
 }
 
 public class TakeDamageTrigger : RelicTrigger
 {
-    public override void Create(RelicEffect effect)
+    public override void Create(Action<Hittable> effect)
     {
         EventBus.Instance.OnDamage += (where, dmg, target) =>
         {
         	if (target.team == Hittable.Team.PLAYER)
-        		effect.Apply(target);
+        		effect(target);
         };
     }
 }
 
 public class StandStillTrigger : RelicTrigger
 {
-    public override void Create(RelicEffect effect)
+    public override void Create(Action<Hittable> effect)
     {
         EventBus.Instance.OnStandStill += (time, target) =>
         {
             if (amount == null || time >= RPNEvaluator.RPNEvaluator.Evaluate(amount, null))
             {
-                effect.Apply(target);
+                effect(target);
             }
         };
     }
@@ -44,26 +44,38 @@ public class StandStillTrigger : RelicTrigger
 
 public class MoveTrigger: RelicTrigger
 {
-    public override void Create(RelicEffect effect)
+    public override void Create(Action<Hittable> effect)
     {
         EventBus.Instance.OnMove += (time, target) =>
         {
             if (amount == null || time >= RPNEvaluator.RPNEvaluator.Evaluate(amount, null))
             {
-                effect.Apply(target);
+                effect(target);
             }
         };
     }
 }
 
-public class KillTrigger: RelicTrigger
+public class KillTrigger : RelicTrigger
 {
-    public override void Create(RelicEffect effect)
+    public override void Create(Action<Hittable> effect)
     {
         EventBus.Instance.OnKill += (time, source, target) =>
         {
             Debug.Log("Trigger onkill");
-            effect.Apply(source);
+            effect(source);
+        };
+    }
+}
+
+public class CastSpellTrigger : RelicTrigger
+{
+    public override void Create(Action<Hittable> effect)
+    {
+        EventBus.Instance.OnCastSpell += (source) =>
+        {
+            Debug.Log("Trigger cast spell");
+            effect(source);
         };
     }
 }

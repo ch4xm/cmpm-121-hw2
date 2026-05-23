@@ -12,6 +12,7 @@ public class Relic
 {
     public string name;
     public int sprite;
+    public bool isActive = false;
 
     [JsonConverter(typeof(TriggerConverter))]
     public RelicTrigger trigger;
@@ -19,14 +20,42 @@ public class Relic
     public RelicEffect effect;
 
     public RelicTrigger? endTrigger;
-    public RelicEffect? endEffect;
 
     public void Activate()
     {
         Debug.Log("Activating Relic: "  + name);
         Debug.Log(trigger.description + " " + effect.description);
-        trigger.Create(effect);
+        isActive = true;
+        trigger.Create(effect.Apply);
+
+        if (effect.until != null)
+        {
+            effect.maxEffectCount = 1;
+            endTrigger = stringToTrigger(effect.until);
+            endTrigger.Create(effect.Remove);
+        }
     }
+
+    public bool IsActive()
+    {
+        return isActive;
+    }
+    
+    public static RelicTrigger stringToTrigger(string type)
+    {
+        RelicTrigger trigger = type switch
+        {
+            "take-damage" => new TakeDamageTrigger(),
+            "stand-still" => new StandStillTrigger(),
+            "on-kill" => new KillTrigger(),
+            "move"  => new MoveTrigger(),
+            "cast-spell" => new CastSpellTrigger(),
+            _ => throw new Exception("Unknown type")
+        };
+        
+        return trigger;
+    }
+
 }
 
 class TriggerConverter : JsonConverter<RelicTrigger>
@@ -41,7 +70,7 @@ class TriggerConverter : JsonConverter<RelicTrigger>
         JObject obj = JObject.Load(reader);
 
         string type = obj["type"]?.ToString();
-
+        /*
         RelicTrigger trigger = type switch
         {
             "take-damage" => new TakeDamageTrigger(),
@@ -49,7 +78,9 @@ class TriggerConverter : JsonConverter<RelicTrigger>
             "on-kill" => new KillTrigger(),
             _ => throw new Exception("Unknown type")
         };
-
+        */
+        RelicTrigger trigger = Relic.stringToTrigger(type);
+            
         serializer.Populate(obj.CreateReader(), trigger);
 
         return trigger;

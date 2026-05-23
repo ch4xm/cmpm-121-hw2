@@ -42,6 +42,13 @@ public class EventBus
         OnKill?.Invoke(time, source, target);
     }
     
+    public event Action<Hittable> OnCastSpell;
+    
+    public void DoCastSpell(Hittable source)
+    {
+        OnCastSpell?.Invoke(source);
+    }
+    
     public event Action<int> OnWaveEnd;
 
     public void DoWaveEnd(int currentWave)

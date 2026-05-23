@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 
 public class SpellCaster 
 {
@@ -107,6 +108,7 @@ public class SpellCaster
         if (mana >= CurrentSpell.GetManaCost() && CurrentSpell.IsReady())
         {
             mana -= CurrentSpell.GetManaCost();
+            EventBus.Instance.DoCastSpell(GameManager.Instance.player.GetComponent<PlayerController>().hp);
             yield return CurrentSpell.Cast(where, target, team);
         }
         yield break;

@@ -39,8 +39,9 @@ public class PlayerController : MonoBehaviour
         relics = new List<Relic>();
         
         GameManager.Instance.player = gameObject;
-
-        EventBus.Instance.OnRelicPickup += AddRelic;
+        
+        AddRelic(relicTypes["Golden Mask"]);
+        // EventBus.Instance.OnRelicPickup += AddRelic;
     }
 
     public void SetClass(string className)
@@ -58,7 +59,7 @@ public class PlayerController : MonoBehaviour
     public void AddRelic(Relic relic)
     {
         relic.Activate();
-        relics.Add(relic);
+        //relics.Add(relic);
     }
 
     public void StartLevel()

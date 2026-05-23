@@ -63,7 +63,9 @@ public class RelicRewardScreenManager : MonoBehaviour
 
     public void PickupRelic(int index)
     {
-        EventBus.Instance.PickupRelic(choices[index]);
+        //EventBus.Instance.PickupRelic(choices[index]);
+        choices[index].Activate();
+        
         HideRelicScreen();
     }
 

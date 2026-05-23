@@ -80,7 +80,6 @@ public class DataLoader
         
         var relicDict = result.ToDictionary(x => x.name, x => x);
         
-        
         return relicDict;
     }
 

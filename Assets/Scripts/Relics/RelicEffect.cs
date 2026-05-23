@@ -11,16 +11,40 @@ public abstract class RelicEffect
     public string type;
     public string? amount;
     public string? until;
-    
-    public RelicEffect() {
+
+    public int currentEffectCount = 0;
+    public int maxEffectCount = -1;
+
+    public void Apply(Hittable player)
+    {
+        if (maxEffectCount >= 0 && currentEffectCount >= maxEffectCount) return;
+        currentEffectCount++;
+
+        ApplyEffect(player);
     }
     
-    public abstract void Apply(Hittable player);
+    public abstract void ApplyEffect(Hittable player);
+
+    public void Remove(Hittable player)
+    {
+        if (currentEffectCount <= 0) return;
+        currentEffectCount--;
+    }
+
+    public virtual void RemoveEffect(Hittable player)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void setMaxStack(int count)
+    {
+        maxEffectCount = count;
+    }
 }
 
 public class GainManaEffect : RelicEffect
 {
-    public override void Apply(Hittable player)
+    public override void ApplyEffect(Hittable player)
     {
         var spellcaster = player.parent.GetComponent<PlayerController>().spellcaster;
         spellcaster.mana += RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
@@ -31,10 +55,19 @@ public class GainManaEffect : RelicEffect
 
 public class GainSpellPowerEffect : RelicEffect
 {
-    public override void Apply(Hittable player)
+    public override void ApplyEffect(Hittable player)
     {
         var spellcaster = player.parent.GetComponent<PlayerController>().spellcaster;
         spellcaster.spell_power += RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
         Debug.Log("Added spell power");
     }
+
+    public override void RemoveEffect(Hittable player)
+    {
+        var spellcaster = player.parent.GetComponent<PlayerController>().spellcaster;
+        spellcaster.spell_power -= RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        Debug.Log("Removed spell power");
+    }
 }
+
+
