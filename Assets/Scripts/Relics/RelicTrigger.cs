@@ -34,7 +34,7 @@ public class StandStillTrigger : RelicTrigger
     {
         EventBus.Instance.OnStandStill += (time, target) =>
         {
-            if (amount == null || time >= RPNEvaluator.RPNEvaluator.Evaluate(amount, null))
+            if (amount == null || time >= Relic.evaluate(amount))
             {
                 effect(target);
             }
@@ -48,7 +48,7 @@ public class MoveTrigger: RelicTrigger
     {
         EventBus.Instance.OnMove += (time, target) =>
         {
-            if (amount == null || time >= RPNEvaluator.RPNEvaluator.Evaluate(amount, null))
+            if (amount == null || time >= Relic.evaluate(amount))
             {
                 effect(target);
             }
@@ -86,7 +86,7 @@ public class NotTakingDamageTrigger : RelicTrigger
     {
         EventBus.Instance.OnNotTakingDamage += (time, target) =>
         {
-            if (time >= RPNEvaluator.RPNEvaluator.Evaluate(amount, null) &&
+            if (time >= Relic.evaluate(amount) &&
                 target.team == Hittable.Team.PLAYER)
             {
                 effect(target);

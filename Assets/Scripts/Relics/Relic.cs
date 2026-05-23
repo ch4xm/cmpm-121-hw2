@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Dynamic;
 using JetBrains.Annotations;
 using UnityEngine.WSA;
@@ -69,6 +70,16 @@ public class Relic
             _ => throw new Exception("Unknown type")
         };
         return effect;
+    }
+
+    public static float evaluate(string s)
+    {
+        var dict = new Dictionary<string, int>
+        {
+            { "wave", GameManager.Instance.currentWave }
+        };
+        
+        return RPNEvaluator.RPNEvaluator.Evaluatef(s, dict);
     }
 }
 

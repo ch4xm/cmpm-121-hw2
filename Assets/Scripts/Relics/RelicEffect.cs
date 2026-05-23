@@ -49,7 +49,7 @@ public class GainManaEffect : RelicEffect
     public override void ApplyEffect(Hittable player)
     {
         var spellcaster = player.parent.GetComponent<PlayerController>().spellcaster;
-        spellcaster.mana += RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        spellcaster.mana += (int)Relic.evaluate(amount);
         spellcaster.mana =  Mathf.Clamp(spellcaster.mana, 0, spellcaster.max_mana);
         Debug.Log("Added mana");
     }
@@ -60,14 +60,14 @@ public class GainSpellPowerEffect : RelicEffect
     public override void ApplyEffect(Hittable player)
     {
         var spellcaster = player.parent.GetComponent<PlayerController>().spellcaster;
-        spellcaster.spell_power += RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        spellcaster.spell_power += (int)Relic.evaluate(amount);
         Debug.Log("Added spell power");
     }
 
     public override void RemoveEffect(Hittable player)
     {
         var spellcaster = player.parent.GetComponent<PlayerController>().spellcaster;
-        spellcaster.spell_power -= RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        spellcaster.spell_power -= (int)Relic.evaluate(amount);
         Debug.Log("Removed spell power");
     }
 }
@@ -76,13 +76,13 @@ public class GainMovementSpeedEffect : RelicEffect
 {
     public override void ApplyEffect(Hittable player)
     {
-        player.parent.GetComponent<PlayerController>().speed += RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        player.parent.GetComponent<PlayerController>().speed += (int)Relic.evaluate(amount);
         Debug.Log("Added speed");
     }
 
     public override void RemoveEffect(Hittable player)
     {
-        player.parent.GetComponent<PlayerController>().speed -= RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        player.parent.GetComponent<PlayerController>().speed -= (int)Relic.evaluate(amount);
         Debug.Log("Removed speed");
     }
 }
@@ -91,13 +91,13 @@ public class HealingOverTimeEffect : RelicEffect
 {
     public override void ApplyEffect(Hittable player)
     {
-        player.parent.GetComponent<PlayerController>().healingOverTime += RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        player.parent.GetComponent<PlayerController>().healingOverTime += Relic.evaluate(amount);
         Debug.Log("Added healing over time");
     }
 
     public override void RemoveEffect(Hittable player)
     {
-        player.parent.GetComponent<PlayerController>().healingOverTime -= RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        player.parent.GetComponent<PlayerController>().healingOverTime -= Relic.evaluate(amount);
         Debug.Log("Removed healing over time");
     }
 }
@@ -106,7 +106,7 @@ public class HealEffect : RelicEffect
 {
     public override void ApplyEffect(Hittable player)
     {
-        player.parent.GetComponent<PlayerController>().hp.Heal((int)RPNEvaluator.RPNEvaluator.Evaluate(amount, null));
+        player.parent.GetComponent<PlayerController>().hp.Heal((int)Relic.evaluate(amount));
         Debug.Log("Added healing");
     }
 }
