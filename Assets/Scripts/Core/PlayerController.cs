@@ -38,8 +38,7 @@ public class PlayerController : MonoBehaviour
         
         GameManager.Instance.player = gameObject;
         
-        AddRelic(relicTypes["speed_relic"]);
-        // EventBus.Instance.OnRelicPickup += AddRelic;
+        AddRelic(GameManager.Instance.relicTypes["Speed Bracelet"]);
 
         EventBus.Instance.OnRelicSelected += AddRelic;
     }
@@ -59,7 +58,7 @@ public class PlayerController : MonoBehaviour
     public void AddRelic(Relic relic)
     {
         relic.Activate();
-        //relics.Add(relic);
+        relics.Add(relic);
     }
 
     public void StartLevel()
