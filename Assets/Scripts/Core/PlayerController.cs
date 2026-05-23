@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour
     public GameObject sprite;
 
     public Dictionary<string, Relic> relicTypes;
+
+    public float healingOverTime = 0f;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,8 +42,10 @@ public class PlayerController : MonoBehaviour
         
         GameManager.Instance.player = gameObject;
         
-        AddRelic(relicTypes["speed_relic"]);
+        AddRelic(relicTypes["Call of Duty"]);
         // EventBus.Instance.OnRelicPickup += AddRelic;
+        
+        InvokeRepeating("HealingOverTime", 0, 1);
     }
 
     public void SetClass(string className)
@@ -101,6 +105,8 @@ public class PlayerController : MonoBehaviour
             EventBus.Instance.DoMove(Time.time - lastStand, hp);
             lastMove = Time.time;
         }
+        
+        EventBus.Instance.DoNotTakingDamage(Time.time - hp.lastDamageTime, hp);
     }
 
     void OnAttack(InputValue value)
@@ -113,6 +119,12 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(spellcaster.Cast(transform.position, mouseWorld));
     }
 
+    // in amount per second
+    public void HealingOverTime()
+    {
+        hp.Heal(healingOverTime);
+    }
+    
     void OnMove(InputValue value)
     {
         if (GameManager.Instance.state != GameManager.GameState.INWAVE &&

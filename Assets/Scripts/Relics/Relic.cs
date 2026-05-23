@@ -50,6 +50,7 @@ public class Relic
             "on-kill" => new KillTrigger(),
             "move"  => new MoveTrigger(),
             "cast-spell" => new CastSpellTrigger(),
+            "not-take-damage" => new NotTakingDamageTrigger(),
             _ => throw new Exception("Unknown type")
         };
         
@@ -63,6 +64,7 @@ public class Relic
             "gain-mana" => new GainManaEffect(),
             "gain-spellpower" => new GainSpellPowerEffect(),
             "gain-movement-speed" => new GainMovementSpeedEffect(),
+            "heal-over-time" => new HealingOverTimeEffect(),
             _ => throw new Exception("Unknown type")
         };
         return effect;

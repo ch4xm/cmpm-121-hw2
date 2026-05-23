@@ -48,6 +48,15 @@ public class EventBus
     {
         OnCastSpell?.Invoke(source);
     }
+
+    public event Action<float, Hittable> OnNotTakingDamage;
+
+    public void DoNotTakingDamage(float time, Hittable source)
+    {
+        OnNotTakingDamage?.Invoke(time, source);
+    }
+    
+    
     
     public event Action<int> OnWaveEnd;
 

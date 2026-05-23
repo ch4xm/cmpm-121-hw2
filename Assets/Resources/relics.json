@@ -67,5 +67,20 @@
             "amount": "5",
             "until": "take-damage"
         }
+    },
+    {
+        "name": "Call of Duty",
+        "sprite": 10,
+        "trigger": {
+            "description": "After you haven't take damage for 3 seconds",
+            "type": "not-take-damage",
+            "amount": "3"
+        },
+        "effect": {
+            "description": "you heal for 3 hp per second until you take damage.",
+            "type": "heal-over-time",
+            "amount": "3",
+            "until": "take-damage"
+        }
     }
 ]

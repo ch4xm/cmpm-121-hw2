@@ -79,3 +79,18 @@ public class CastSpellTrigger : RelicTrigger
         };
     }
 }
+
+public class NotTakingDamageTrigger : RelicTrigger
+{
+    public override void Create(Action<Hittable> effect)
+    {
+        EventBus.Instance.OnNotTakingDamage += (time, target) =>
+        {
+            if (time >= RPNEvaluator.RPNEvaluator.Evaluate(amount, null) &&
+                target.team == Hittable.Team.PLAYER)
+            {
+                effect(target);
+            }
+        };
+    }
+}

@@ -87,4 +87,19 @@ public class GainMovementSpeedEffect : RelicEffect
     }
 }
 
+public class HealingOverTimeEffect : RelicEffect
+{
+    public override void ApplyEffect(Hittable player)
+    {
+        player.parent.GetComponent<PlayerController>().healingOverTime += RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        Debug.Log("Added healing over time");
+    }
+
+    public override void RemoveEffect(Hittable player)
+    {
+        player.parent.GetComponent<PlayerController>().healingOverTime -= RPNEvaluator.RPNEvaluator.Evaluate(amount, null);
+        Debug.Log("Removed healing over time");
+    }
+}
+
 
