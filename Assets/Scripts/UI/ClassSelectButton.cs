@@ -3,8 +3,6 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using PlayerClass = PlayerController.PlayerClass;
-
 
 public class ClassSelectButton : MonoBehaviour
 {
@@ -37,8 +35,6 @@ public class ClassSelectButton : MonoBehaviour
             "\nSpellpower: " + spellpower + 
             "\nSpeed: " + speed;
     }
-
-    
 
     public void SetIcon(int sprite)
     {

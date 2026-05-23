@@ -28,20 +28,20 @@ public class PlayerController : MonoBehaviour
 
     public GameObject sprite;
 
-    public Dictionary<string, Relic> relicTypes;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         unit = GetComponent<Unit>();
 
-        relicTypes = DataLoader.ReadRelics();
         relics = new List<Relic>();
         
         GameManager.Instance.player = gameObject;
         
         AddRelic(relicTypes["speed_relic"]);
         // EventBus.Instance.OnRelicPickup += AddRelic;
+
+        EventBus.Instance.OnRelicSelected += AddRelic;
     }
 
     public void SetClass(string className)
@@ -129,7 +129,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log("You Lost");
     }
 
-    public void LevelUp(int wave)
+    public void ApplyScaling(int wave)
     {
         Dictionary<string, int> vars = new ()
         {
@@ -141,22 +141,9 @@ public class PlayerController : MonoBehaviour
         spellcaster.mana_reg = RPNEvaluator.RPNEvaluator.Evaluate(currentClass.mana_regeneration, vars);
         spellcaster.spell_power = RPNEvaluator.RPNEvaluator.Evaluate(currentClass.spellpower, vars);
         speed = RPNEvaluator.RPNEvaluator.Evaluate(currentClass.speed, vars);
-
-        //hp.SetMaxHP(RPNEvaluator.RPNEvaluator.Evaluate("95 wave 5 * +", vars));
-        //spellcaster.max_mana = RPNEvaluator.RPNEvaluator.Evaluate("90 wave 10 * +", vars);
-        //spellcaster.mana_reg = RPNEvaluator.RPNEvaluator.Evaluate("10 wave +", vars);
-        //spellcaster.spell_power = RPNEvaluator.RPNEvaluator.Evaluate("wave 10 *", vars);
-        //speed = 5;
     }
-
-    public class PlayerClass
+    void OnDestroy()
     {
-        public string name;
-        public int sprite;
-        public string health;
-        public string mana;
-        public string mana_regeneration;
-        public string spellpower;
-        public string speed;
+        EventBus.Instance.OnRelicSelected -= AddRelic;
     }
 }

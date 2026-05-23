@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using static PlayerController;
-using PlayerClass = PlayerController.PlayerClass;
-
 
 public class GameManager 
 {
@@ -23,9 +20,12 @@ public class GameManager
 
     public int countdown;
 
-    public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
     public List<Level> levels;
+    public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
+
     public Dictionary<string, PlayerClass> playerClasses;
+    public Dictionary<string, Relic> relicTypes;
+
 
     public Level currentLevel;
     public int currentWave = 1;
@@ -90,7 +90,7 @@ public class GameManager
         levels = DataLoader.ReadLevels();
         enemyTypes = DataLoader.ReadEnemies();
         playerClasses = DataLoader.ReadPlayerClasses();
-
+        relicTypes = DataLoader.ReadRelics();
         enemies = new List<GameObject>();
     }
 }

@@ -70,10 +70,10 @@ public class EventBus
         OnHideRewardScreen?.Invoke();
     }
 
-    public event Action<Relic> OnRelicPickup;
-    public void PickupRelic(Relic relic)
+    public event Action<Relic> OnRelicSelected;
+    public void RelicSelected(Relic relic)
     {
-        OnRelicPickup?.Invoke(relic);
+        OnRelicSelected?.Invoke(relic);
     }
 
     public event Action<string> OnLevelSelected;
