@@ -7,7 +7,6 @@ using System.Runtime.ExceptionServices;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Object = System.Object;
-using PlayerClass = PlayerController.PlayerClass;
 
 public class DataLoader
 {

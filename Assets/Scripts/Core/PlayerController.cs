@@ -16,9 +16,7 @@ public class PlayerController : MonoBehaviour
 
     public SpellCaster spellcaster;
     public SpellUIContainer spellUI;
-
-    public List<Relic> relics;
-
+    
     public int speed;
 
     public Unit unit;
@@ -28,8 +26,8 @@ public class PlayerController : MonoBehaviour
 
     public GameObject sprite;
 
-    public Dictionary<string, Relic> relicTypes;
-
+    public Dictionary<string, Relic> relics;
+    
     public float healingOverTime = 0f;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,13 +35,13 @@ public class PlayerController : MonoBehaviour
     {
         unit = GetComponent<Unit>();
 
-        relicTypes = DataLoader.ReadRelics();
-        relics = new List<Relic>();
+        relics = DataLoader.ReadRelics();
         
         GameManager.Instance.player = gameObject;
         
-        AddRelic(relicTypes["Call of Duty"]);
-        // EventBus.Instance.OnRelicPickup += AddRelic;
+        AddRelic(GameManager.Instance.relicTypes["Speed Bracelet"]);
+
+        EventBus.Instance.OnRelicSelected += AddRelic;
         
         InvokeRepeating("HealingOverTime", 0, 1);
     }
@@ -63,12 +61,12 @@ public class PlayerController : MonoBehaviour
     public void AddRelic(Relic relic)
     {
         relic.Activate();
-        //relics.Add(relic);
+        relics.Add(relic);
     }
 
     public void StartLevel()
     {
-        relics = new List<Relic>();
+        relics = new List<Relic>(); // TODO: refactor this
 
         spellcaster = new SpellCaster(125, 8, Hittable.Team.PLAYER);
         spellUI.RefreshUI();
@@ -141,7 +139,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log("You Lost");
     }
 
-    public void LevelUp(int wave)
+    public void ApplyScaling(int wave)
     {
         Dictionary<string, int> vars = new ()
         {
@@ -153,22 +151,9 @@ public class PlayerController : MonoBehaviour
         spellcaster.mana_reg = RPNEvaluator.RPNEvaluator.Evaluate(currentClass.mana_regeneration, vars);
         spellcaster.spell_power = RPNEvaluator.RPNEvaluator.Evaluate(currentClass.spellpower, vars);
         speed = RPNEvaluator.RPNEvaluator.Evaluate(currentClass.speed, vars);
-
-        //hp.SetMaxHP(RPNEvaluator.RPNEvaluator.Evaluate("95 wave 5 * +", vars));
-        //spellcaster.max_mana = RPNEvaluator.RPNEvaluator.Evaluate("90 wave 10 * +", vars);
-        //spellcaster.mana_reg = RPNEvaluator.RPNEvaluator.Evaluate("10 wave +", vars);
-        //spellcaster.spell_power = RPNEvaluator.RPNEvaluator.Evaluate("wave 10 *", vars);
-        //speed = 5;
     }
-
-    public class PlayerClass
+    void OnDestroy()
     {
-        public string name;
-        public int sprite;
-        public string health;
-        public string mana;
-        public string mana_regeneration;
-        public string spellpower;
-        public string speed;
+        EventBus.Instance.OnRelicSelected -= AddRelic;
     }
 }

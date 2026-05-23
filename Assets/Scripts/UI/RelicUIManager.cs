@@ -8,13 +8,22 @@ public class RelicUIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        EventBus.Instance.OnRelicPickup += OnRelicPickup;
+        EventBus.Instance.OnGameStart += (_, _) => Reset();
+        EventBus.Instance.OnRelicSelected += OnRelicPickup;
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    void Reset()
+    {
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     public void OnRelicPickup(Relic r)

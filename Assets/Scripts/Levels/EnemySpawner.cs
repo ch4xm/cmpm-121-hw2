@@ -148,7 +148,7 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator SpawnWave()
     {
-        GameManager.Instance.player.GetComponent<PlayerController>().LevelUp(GameManager.Instance.currentWave);
+        GameManager.Instance.player.GetComponent<PlayerController>().ApplyScaling(GameManager.Instance.currentWave);
         
         activeSpawnGroups = 0;
 
