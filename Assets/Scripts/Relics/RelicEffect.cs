@@ -102,4 +102,12 @@ public class HealingOverTimeEffect : RelicEffect
     }
 }
 
+public class HealEffect : RelicEffect
+{
+    public override void ApplyEffect(Hittable player)
+    {
+        player.parent.GetComponent<PlayerController>().hp.Heal((int)RPNEvaluator.RPNEvaluator.Evaluate(amount, null));
+        Debug.Log("Added healing");
+    }
+}
 

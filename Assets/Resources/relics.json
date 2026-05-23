@@ -82,5 +82,18 @@
             "amount": "3",
             "until": "take-damage"
         }
+    },
+    {
+        "name": "Bloodthirsty Amulet",
+        "sprite": 7,
+        "trigger": {
+            "description": "After you kill an enemy",
+            "type": "on-kill"
+        },
+        "effect": {
+            "description": "you heal for 10 hp.",
+            "type": "heal",
+            "amount": "10"
+        }
     }
 ]

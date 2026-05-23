@@ -65,6 +65,7 @@ public class Relic
             "gain-spellpower" => new GainSpellPowerEffect(),
             "gain-movement-speed" => new GainMovementSpeedEffect(),
             "heal-over-time" => new HealingOverTimeEffect(),
+            "heal" => new HealEffect(),
             _ => throw new Exception("Unknown type")
         };
         return effect;
