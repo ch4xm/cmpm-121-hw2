@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -16,7 +17,9 @@ public class PlayerController : MonoBehaviour
 
     public SpellCaster spellcaster;
     public SpellUIContainer spellUI;
-    
+
+    public Dictionary<string, Relic> relics;
+
     public int speed;
 
     public Unit unit;
@@ -26,8 +29,6 @@ public class PlayerController : MonoBehaviour
 
     public GameObject sprite;
 
-    public Dictionary<string, Relic> relics;
-    
     public float healingOverTime = 0f;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -35,12 +36,8 @@ public class PlayerController : MonoBehaviour
     {
         unit = GetComponent<Unit>();
 
-        relics = DataLoader.ReadRelics();
-        
         GameManager.Instance.player = gameObject;
         
-        AddRelic(GameManager.Instance.relicTypes["Speed Bracelet"]);
-
         EventBus.Instance.OnRelicSelected += AddRelic;
         
         InvokeRepeating("HealingOverTime", 0, 1);
@@ -61,12 +58,21 @@ public class PlayerController : MonoBehaviour
     public void AddRelic(Relic relic)
     {
         relic.Activate();
-        relics.Add(relic);
+    }
+    
+    public int GetActiveRelicCount()
+    {
+        return relics.Count(kv => kv.Value.isActive == true);
+    }
+
+    public List<Relic> GetInactiveRelics()
+    {
+        return relics.Where(x => x.Value.isActive == false).Select(x => x.Value).ToList();
     }
 
     public void StartLevel()
     {
-        relics = new List<Relic>(); // TODO: refactor this
+        relics = DataLoader.ReadRelics();
 
         spellcaster = new SpellCaster(125, 8, Hittable.Team.PLAYER);
         spellUI.RefreshUI();

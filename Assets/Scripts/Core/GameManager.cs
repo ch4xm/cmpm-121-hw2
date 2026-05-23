@@ -24,8 +24,6 @@ public class GameManager
     public Dictionary<string, Enemy> enemyTypes;    // Store in key value pairs of enemy name ("zombie") to Enemy template classes
 
     public Dictionary<string, PlayerClass> playerClasses;
-    public Dictionary<string, Relic> relicTypes;
-
 
     public Level currentLevel;
     public int currentWave = 1;
@@ -72,7 +70,7 @@ public class GameManager
 
     public void SetupLevel(string levelName)
     {
-        player.GetComponent<PlayerController>().relics.Clear();
+        //player.GetComponent<PlayerController>().relics.Clear();
         RemoveAllEnemies();
         Instance.currentWave = 1;
         Instance.currentLevel = levels.Find(x => x.name == levelName);
@@ -90,7 +88,6 @@ public class GameManager
         levels = DataLoader.ReadLevels();
         enemyTypes = DataLoader.ReadEnemies();
         playerClasses = DataLoader.ReadPlayerClasses();
-        relicTypes = DataLoader.ReadRelics();
         enemies = new List<GameObject>();
     }
 }

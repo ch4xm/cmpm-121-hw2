@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class RelicUIManager : MonoBehaviour
@@ -11,6 +12,7 @@ public class RelicUIManager : MonoBehaviour
         EventBus.Instance.OnGameStart += (_, _) => Reset();
         EventBus.Instance.OnRelicSelected += OnRelicPickup;
     }
+
 
     // Update is called once per frame
     void Update()
@@ -29,12 +31,21 @@ public class RelicUIManager : MonoBehaviour
     public void OnRelicPickup(Relic r)
     {
         // make a new Relic UI representation
+        int activeRelicCount = player.GetActiveRelicCount();
+
         GameObject rui = Instantiate(relicUIPrefab, transform);
-        rui.transform.localPosition = new Vector3(-450 + 40 * (player.relics.Count - 1), 0, 0);
+        rui.transform.localPosition = new Vector3(-450 + 40 * (activeRelicCount - 1), 0, 0);
         RelicUI ruic = rui.GetComponent<RelicUI>();
         ruic.SetRelic(r);
         ruic.player = player;
-        ruic.index = player.relics.Count - 1;
+        ruic.index = activeRelicCount - 1;
         
     }
+
+    void OnDestroy()
+    {
+        EventBus.Instance.OnGameStart -= (_, _) => Reset();
+        EventBus.Instance.OnRelicSelected -= OnRelicPickup;
+    }
+
 }

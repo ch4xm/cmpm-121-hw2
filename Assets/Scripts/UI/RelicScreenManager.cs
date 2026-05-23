@@ -23,7 +23,7 @@ public class RelicRewardScreenManager : MonoBehaviour
 
     public void CheckRelicCondition()
     {
-        if (GameManager.Instance.currentWave % 1 == 0)
+        if (GameManager.Instance.currentWave % 3 == 0)
         {
             ShowRelicScreen();
             return;
@@ -33,17 +33,21 @@ public class RelicRewardScreenManager : MonoBehaviour
     }
     public void ShowRelicScreen()
     {
-        var relics = GameManager.Instance.relicTypes.Values.ToList<Relic>();
+        PlayerController player = GameManager.Instance.player.GetComponent<PlayerController>();
+
+        // Generate randomly ordered relics and get first 3 of them
+        var lockedRelics = player.GetInactiveRelics();
+        var relicChoices = lockedRelics.OrderBy(_ => UnityEngine.Random.value).Take(3).ToList();
 
         for (int i = 0; i < relicButtons.Length; i++)
         {
-            bool active = i < relics.Count;
+            bool active = i < relicChoices.Count;
 
             relicButtons[i].gameObject.SetActive(active);
 
             if (active)
             {
-                relicButtons[i].SetRelic(relics[i]);
+                relicButtons[i].SetRelic(relicChoices[i]);
             }
         }
 
@@ -55,5 +59,10 @@ public class RelicRewardScreenManager : MonoBehaviour
         RelicScreen.SetActive(false);
 
         EventBus.Instance.DoNextWave();
+    }
+    void OnDestroy()
+    {
+        EventBus.Instance.OnHideRewardScreen -= CheckRelicCondition;
+        EventBus.Instance.OnRelicSelected -= _ => HideRelicScreen();
     }
 }
